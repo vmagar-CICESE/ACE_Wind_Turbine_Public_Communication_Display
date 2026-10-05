@@ -1,0 +1,132 @@
+=== wecstd (asset) ===
+  sample_count                 | Sampling value count                | unit=None | ENERCON Wecstd field Sample at array index 0.
+  wind_speed_mean              | Mean wind speed                     | unit=m/s | ENERCON Wecstd field mrwSmpVWi at array index 1.
+  wind_speed_max               | Maximum wind speed                  | unit=m/s | ENERCON Wecstd field prwSmpVWi at array index 2.
+  wind_speed_min               | Minimum wind speed                  | unit=m/s | ENERCON Wecstd field lrwSmpVWi at array index 3.
+  rotor_speed_mean             | Mean rotor speed                    | unit=rpm | ENERCON Wecstd field mrwSmpNRot at array index 4.
+  rotor_speed_max              | Maximum rotor speed                 | unit=rpm | ENERCON Wecstd field prwSmpNRot at array index 5.
+  rotor_speed_min              | Minimum rotor speed                 | unit=rpm | ENERCON Wecstd field lrwSmpNRot at array index 6.
+  active_power_mean            | Mean active power                   | unit=kW | ENERCON Wecstd field mrwSmpP at array index 7.
+  active_power_max             | Maximum active power                | unit=kW | ENERCON Wecstd field prwSmpP at array index 8.
+  active_power_min             | Minimum active power                | unit=kW | ENERCON Wecstd field lrwSmpP at array index 9.
+  nacelle_position             | Nacelle position                    | unit=deg | ENERCON Wecstd field mrwAbGoPos at array index 10.
+  operating_hours              | Operating hours                     | unit=h | ENERCON Wecstd field arwAbWorkH at array index 11.
+  energy_produced              | Energy produced                     | unit=kWh | ENERCON Wecstd field arwAbW at array index 12.
+  production_time              | Production time                     | unit=min | ENERCON Wecstd field arwAbWrkM at array index 13.
+  reactive_power_mean          | Mean reactive power                 | unit=kvar | ENERCON Wecstd field mrwSmpQ at array index 14.
+  reactive_power_max           | Maximum reactive power              | unit=kvar | ENERCON Wecstd field prwSmpQ at array index 15.
+  reactive_power_min           | Minimum reactive power              | unit=kvar | ENERCON Wecstd field lrwSmpQ at array index 16.
+  available_power_by_wind_mean | Mean available power by wind        | unit=kW | ENERCON Wecstd field mrwSmpPwin at array index 17.
+  technically_available_power_mean | Mean technically available power    | unit=kW | ENERCON Wecstd field mrwSmpPte at array index 18.
+  available_power_after_force_majeure_mean | Mean available power after force majeure | unit=kW | ENERCON Wecstd field mrwSmpPfm at array index 19.
+  available_power_after_external_setpoints_mean | Mean available power after external setpoints | unit=kW | ENERCON Wecstd field mrwSmpPext at array index 20.
+  blade_angle_mean             | Mean blade angle                    | unit=deg | ENERCON Wecstd field mrwSmpAng at array index 21.
+  precipitation_mean           | Mean precipitation                  | unit=mm/min | ENERCON Wecstd field mrwSmpRai at array index 22.
+  precipitation_max            | Maximum precipitation               | unit=mm/min | ENERCON Wecstd field prwSmpRai at array index 23.
+  precipitation_min            | Minimum precipitation               | unit=mm/min | ENERCON Wecstd field lrwSmpRai at array index 24.
+  visibility_mean              | Mean visibility                     | unit=km | ENERCON Wecstd field mrwSmpVisR at array index 25.
+  visibility_max               | Maximum visibility                  | unit=km | ENERCON Wecstd field prwSmpVisR at array index 26.
+  visibility_min               | Minimum visibility                  | unit=km | ENERCON Wecstd field lrwSmpVisR at array index 27.
+  ambient_brightness_mean      | Mean ambient brightness             | unit=lux | ENERCON Wecstd field mrwSmpBriN at array index 28.
+  labko_ice_amplitude_mean     | Mean labko ice amplitude            | unit=% | ENERCON Wecstd field mrwSmpLIcA at array index 29.
+  ice_formation_timer_mean     | Mean ice formation timer            | unit=degC min | ENERCON Wecstd field mrwSmpCIce at array index 30.
+  air_pressure_mean            | Mean air pressure                   | unit=mbar | ENERCON Wecstd field mrwSmpAirP at array index 31.
+  air_humidity_mean            | Mean air humidity                   | unit=% | ENERCON Wecstd field mrwSmpAirH at array index 32.
+
+=== wec_instantaneous (asset) ===
+  wec_wind_speed               | Wind speed                          | unit=m/s | Value supplied directly by OPC node {asset_path}/Vwind.
+  wec_wind_direction           | Wind direction                      | unit=deg | Value supplied directly by OPC node {asset_path}/Vane.
+  wec_rotor_speed              | Rotor speed                         | unit=rpm | Value supplied directly by OPC node {asset_path}/NRotor.
+  wec_nacelle_position         | Nacelle position                    | unit=deg | Value supplied directly by OPC node {asset_path}/GoPos.
+  wec_operating_hours          | Operating hours                     | unit=h | Value supplied directly by OPC node {asset_path}/Hour.
+  wec_energy_exported          | Energy exported                     | unit=kWh | Value supplied directly by OPC node {asset_path}/Wexp.
+  wec_active_power             | Active power                        | unit=kW | Value supplied directly by OPC node {asset_path}/P.
+  wec_power_factor             | Power factor                        | unit=None | Value supplied directly by OPC node {asset_path}/CosPhi.
+  wec_reactive_power           | Reactive power                      | unit=kvar | Value supplied directly by OPC node {asset_path}/Q.
+  wec_voltage_l1               | Low voltage U12                     | unit=V | Value supplied directly by OPC node {asset_path}/U-L1.
+  wec_voltage_l2               | Low voltage U23                     | unit=V | Value supplied directly by OPC node {asset_path}/U-L2.
+  wec_voltage_l3               | Low voltage U31                     | unit=V | Value supplied directly by OPC node {asset_path}/U-L3.
+  wec_current_l1               | Grid current L1                     | unit=A | Value supplied directly by OPC node {asset_path}/I-L1.
+  wec_current_l2               | Grid current L2                     | unit=A | Value supplied directly by OPC node {asset_path}/I-L2.
+  wec_current_l3               | Grid current L3                     | unit=A | Value supplied directly by OPC node {asset_path}/I-L3.
+  wec_frequency                | Grid frequency                      | unit=Hz | Value supplied directly by OPC node {asset_path}/Freq.
+  wec_available_power_by_wind  | Available power by wind             | unit=kW | Value supplied directly by OPC node {asset_path}/PavaVWind.
+  wec_technically_available_power | Technically available power         | unit=kW | Value supplied directly by OPC node {asset_path}/PavaTech.
+  wec_available_power_after_force_majeure | Available power after force majeure | unit=kW | Value supplied directly by OPC node {asset_path}/PavaForceM.
+  wec_available_power_after_external_setpoints | Available power after external setpoints | unit=kW | Value supplied directly by OPC node {asset_path}/PavaExtern.
+
+=== site_instantaneous (site) ===
+  aggregate_wind_speed         | Mean wind speed                     | unit=m/s | Value supplied directly by OPC node Loc/Wec/CalcVwind.
+  aggregate_wind_direction     | Mean wind direction                 | unit=deg | Value supplied directly by OPC node Loc/Wec/CalcWDir.
+  aggregate_active_power       | Total active power                  | unit=kW | Value supplied directly by OPC node Loc/Wec/CalcP.
+  aggregate_power_factor       | Mean power factor                   | unit=None | Value supplied directly by OPC node Loc/Wec/CalcCosPhi.
+  aggregate_reactive_power     | Total reactive power                | unit=kvar | Value supplied directly by OPC node Loc/Wec/CalcQ.
+  aggregate_available_wecs     | Available WECs                      | unit=% | Value supplied directly by OPC node Loc/Wec/AvaPlant.
+  aggregate_communication_availability | Plant communication availability    | unit=% | Value supplied directly by OPC node Loc/Wec/ComState.
+  aggregate_theoretical_maximum_active_power | Theoretical maximum active power    | unit=kW | Value supplied directly by OPC node Loc/Wec/AbstMaxP.
+  aggregate_available_power_by_wind | Available power by wind             | unit=kW | Value supplied directly by OPC node Loc/Wec/PavaVWind.
+  aggregate_technically_available_power | Technically available power         | unit=kW | Value supplied directly by OPC node Loc/Wec/PavaTech.
+  aggregate_available_power_after_force_majeure | Available power after force majeure | unit=kW | Value supplied directly by OPC node Loc/Wec/PavaForceM.
+  aggregate_available_power_after_external_setpoints | Available power after external setpoints | unit=kW | Value supplied directly by OPC node Loc/Wec/PavaExtern.
+  aggregate_reactive_power_absorption_reserve | Reactive-power absorption reserve   | unit=kvar | Value supplied directly by OPC node Loc/Wec/CalcQAbsRes.
+  aggregate_reactive_power_generation_reserve | Reactive-power generation reserve   | unit=kvar | Value supplied directly by OPC node Loc/Wec/CalcQGenRes.
+
+=== wec_availability (asset) ===
+  availability                 | Availability                        | unit=% | Native daily availability field supplied by wec_availability.
+  time_0                       | Availability time component 0       | unit=s | Native daily availability field supplied by wec_availability.
+  time_1                       | Availability time component 1       | unit=s | Native daily availability field supplied by wec_availability.
+  time_2                       | Availability time component 2       | unit=s | Native daily availability field supplied by wec_availability.
+  time_3                       | Availability time component 3       | unit=s | Native daily availability field supplied by wec_availability.
+  time_4                       | Availability time component 4       | unit=s | Native daily availability field supplied by wec_availability.
+  time_5                       | Availability time component 5       | unit=s | Native daily availability field supplied by wec_availability.
+
+=== wec_configuration (asset) ===
+  wec_serial_number            | WEC serial number                   | unit=None | Value supplied directly by OPC node {asset_path}/SerieNo.
+  wec_active                   | WEC active                          | unit=None | Value supplied directly by OPC node {asset_path}/Activ.
+  wec_type_number              | WEC type number                     | unit=None | Value supplied directly by OPC node {asset_path}/TypeNo.
+  wec_type                     | WEC type                            | unit=None | Value supplied directly by OPC node {asset_path}/TypeStr.
+  wec_alias                    | WEC alias                           | unit=None | Value supplied directly by OPC node {asset_path}/Alias.
+  wec_nominal_power            | WEC nominal power                   | unit=kW | Value supplied directly by OPC node {asset_path}/NomP.
+  wec_availability_start       | WEC availability start              | unit=None | Value supplied directly by OPC node {asset_path}/Ava/UpTime.
+
+=== site_configuration (site) ===
+  location_number              | Location number                     | unit=None | Value supplied directly by OPC node Loc/LocNo.
+  location_name                | Location name                       | unit=None | Value supplied directly by OPC node Loc/LocName.
+  opc_plant_count              | Number of configured OPC plants     | unit=None | Value supplied directly by OPC node Loc/NoPlant.
+  farm_nominal_power           | Farm nominal power                  | unit=kW | Value supplied directly by OPC node Loc/Wec/NomP.
+  scada_time_zone              | SCADA time zone                     | unit=None | Value supplied directly by OPC node Scada/TimeZone.
+  scada_daylight_saving        | SCADA daylight-saving setting       | unit=None | Value supplied directly by OPC node Scada/Dls.
+  scada_uptime                 | SCADA uptime                        | unit=None | Value supplied directly by OPC node Scada/UpTime.
+
+=== tep3c021 (asset) ===
+  sample_count                 | Sample count                        | unit=None | Number of source samples.
+  spinner_temperature_mean     | Spinner temperature                 | unit=degC | EP3-CS02: Spinner temperature.
+  front_bearing_temperature_mean | Front bearing temperature           | unit=degC | EP3-CS02: Front bearing temperature.
+  rear_bearing_temperature_mean | Rear bearing temperature            | unit=degC | EP3-CS02: Rear bearing temperature.
+  cabinet_a_temperature_mean   | Cabinet A temperature               | unit=degC | EP3-CS02: Cabinet A temperature.
+  cabinet_b_temperature_mean   | Cabinet B temperature               | unit=degC | EP3-CS02: Cabinet B temperature.
+  cabinet_c_temperature_mean   | Cabinet C temperature               | unit=degC | EP3-CS02: Cabinet C temperature.
+  blade_a_temperature_mean     | Blade A temperature                 | unit=degC | EP3-CS02: Blade A temperature.
+  blade_b_temperature_mean     | Blade B temperature                 | unit=degC | EP3-CS02: Blade B temperature.
+  blade_c_temperature_mean     | Blade C temperature                 | unit=degC | EP3-CS02: Blade C temperature.
+  rotor_1_temperature_mean     | Rotor 1 temperature                 | unit=degC | EP3-CS02: Rotor 1 temperature.
+  rotor_2_temperature_mean     | Rotor 2 temperature                 | unit=degC | EP3-CS02: Rotor 2 temperature.
+  cooling_water_temperature_mean | Cooling water temperature           | unit=degC | EP3-CS02: Cooling water temperature.
+  outside_hub_height_temperature_mean | Outside temperature at hub height   | unit=degC | EP3-CS02: Outside temperature at hub height.
+  nacelle_temperature_mean     | Nacelle temperature                 | unit=degC | EP3-CS02: Nacelle temperature.
+  nacelle_control_cabinet_temperature_mean | Nacelle control cabinet temperature | unit=degC | EP3-CS02: Nacelle control cabinet temperature.
+  main_carrier_temperature_mean | Main carrier temperature            | unit=degC | EP3-CS02: Main carrier temperature.
+  yaw_inverter_cabinet_temperature_mean | Yaw inverter cabinet temperature    | unit=degC | EP3-CS02: Yaw inverter cabinet temperature.
+  fan_inverter_cabinet_temperature_mean | Fan inverter cabinet temperature    | unit=degC | EP3-CS02: Fan inverter cabinet temperature.
+  outside_ground_temperature_mean | Outside temperature at ground level | unit=degC | EP3-CS02: Outside temperature at ground level.
+  tower_temperature_mean       | Tower temperature                   | unit=degC | EP3-CS02: Tower temperature.
+  control_cabinet_temperature_mean | Control cabinet temperature         | unit=degC | EP3-CS02: Control cabinet temperature.
+  transformer_temperature_mean | Transformer temperature             | unit=degC | EP3-CS02: Transformer temperature.
+
+=== wecshad (asset) ===
+  sample_count                 | Sample count                        | unit=None | Number of source samples.
+  shadow_set_accumulated       | Accumulated shadow set value        | unit=None | Accumulated shadow set value.
+  shadow_mean                  | Mean shadow value                   | unit=None | Mean shadow value.
+  shadow_max                   | Maximum shadow value                | unit=None | Maximum shadow value.
+  shadow_min                   | Minimum shadow value                | unit=None | Minimum shadow value.
+

@@ -1,0 +1,261 @@
+:root {
+  color-scheme: dark;
+  --sky-top: #0b2545;
+  --sky-bottom: #2f6690;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.14);
+  --text: #f3f7fb;
+  --muted: #b7c6d9;
+  --good: #3ddc84;
+  --stale: #ffc857;
+  --offline: #ff6b6b;
+  --turbine: #e9f1f8;
+  --turbine-shadow: #c3d3e3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 100%);
+  overflow: hidden;
+}
+
+.stage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+}
+
+.brand {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.brand-icon {
+  margin-right: 0.4em;
+}
+
+.freshness {
+  padding: 0.35em 0.9em;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--card-border);
+  font-size: 0.85em;
+}
+
+.freshness.good {
+  color: var(--good);
+  border-color: var(--good);
+}
+
+.freshness.stale {
+  color: var(--stale);
+  border-color: var(--stale);
+}
+
+.freshness.offline {
+  color: var(--offline);
+  border-color: var(--offline);
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  flex-wrap: wrap;
+}
+
+.turbine-wrap {
+  width: min(32vw, 320px);
+}
+
+#turbine-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.tower {
+  fill: var(--turbine-shadow);
+}
+
+.nacelle {
+  fill: var(--turbine);
+}
+
+.hub {
+  fill: var(--turbine-shadow);
+}
+
+.rotor .blade path {
+  fill: var(--turbine);
+  stroke: var(--turbine-shadow);
+  stroke-width: 1;
+}
+
+.rotor {
+  animation: spin linear infinite;
+  animation-duration: 8s;
+  animation-play-state: paused;
+}
+
+.rotor.spinning {
+  animation-play-state: running;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.compass-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 2;
+  stroke-dasharray: 4 6;
+}
+
+.compass-needle {
+  transition: transform 0.6s ease-out;
+  fill: var(--good);
+}
+
+.compass-label {
+  fill: var(--muted);
+  font-size: 13px;
+}
+
+.stats {
+  text-align: center;
+  min-width: min(90vw, 360px);
+}
+
+.power-figure {
+  font-size: clamp(3.5rem, 10vw, 7rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.power-figure .unit {
+  font-size: 0.35em;
+  margin-left: 0.2em;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.power-caption {
+  color: var(--muted);
+  margin-top: 0.25em;
+  font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.substats {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.stat .label {
+  font-size: 0.8em;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat .value {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 600;
+}
+
+.observed {
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.facts {
+  border-top: 1px solid var(--card-border);
+  padding-top: 1rem;
+  text-align: center;
+}
+
+.fact-row {
+  display: flex;
+  justify-content: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+}
+
+.fact-value {
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 700;
+}
+
+.fact-label {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.mission {
+  max-width: 60ch;
+  margin: 0 auto 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.credit {
+  max-width: 70ch;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+a {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotor {
+    animation: none;
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "creations": [
+    {
+      "id": "ace-wind-now",
+      "title": "ACE Wind Now",
+      "creator": "charlie9578",
+      "summary": "A calm community turbine card showing instantaneous power and wind speed from the one-second feed, with a timestamp and clear stale or unavailable states.",
+      "viewUrl": "https://wedowind.github.io/WeDoWind-ODE-ACE-Challenge/creations/ace-wind-now/",
+      "sourceUrl": "https://github.com/WeDoWind/WeDoWind-ODE-ACE-Challenge/tree/main/site/creations/ace-wind-now",
+      "image": "images/creations/ace-wind-now.png",
+      "imageAlt": "ACE Wind Now card with a green turbine illustration, live power in kW and wind speed in m/s from the one-second feed, a recent-reading badge, and the oldest signal observation time.",
+      "license": "MIT",
+      "dataUse": "Uses ACE wec-1 wec_instantaneous latest 1s power and wind speed; refreshes every second; marks signal observations over one minute old stale and retains the last reading if the API is unavailable."
+    },
+    {
+      "id": "issue-3",
+      "title": "My first dashboard",
+      "creator": "Charlie",
+      "summary": "A very basic display just to test the system",
+      "viewUrl": "https://fantasy-timbale-z19vq.ship.place/",
+      "image": "images/creations/issue-3.png",
+      "imageAlt": "A simple dashboard with a wind turbine displayed"
+    }
+  ]
+}
