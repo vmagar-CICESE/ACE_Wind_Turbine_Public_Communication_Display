@@ -185,10 +185,12 @@ body {
   gap: 0.6rem;
   align-items: flex-start;
   overflow-y: auto;
-  /* Capped so it can never reach into the top-right readout's own reserved
-     space (now narrower, ~12rem box + margin), nor into the centred title's
-     own reserved half-width, on any screen width. */
-  max-width: min(70.4ch, max(calc(100vw - 15rem - 7rem), 12rem), max(calc(50vw - 14rem), 12rem));
+  /* Narrower than before (on purpose, so the mission text wraps sooner) but
+     still capped so it can never reach into the top-right readout's own
+     reserved space, nor into the centred title's own reserved half-width,
+     on any screen width. The 18rem term is a fixed width (not tied to the
+     viewport) so the mission text wraps the same way on any screen. */
+  max-width: min(18rem, max(calc(100vw - 15rem - 7rem), 12rem), max(calc(50vw - 22.5rem), 12rem));
 }
 
 .freshness {

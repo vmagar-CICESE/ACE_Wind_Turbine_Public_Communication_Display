@@ -190,6 +190,20 @@ scrolling as a fallback, the same technique Concept 3 already uses for its
 own overlay) keeps a comfortable **~60px gap at 720p and ~355px at 1080p**
 between the two boxes. No overlap occurs at either resolution.
 
+### 11. Narrower info panel, re-wrapped mission text
+
+The info panel's own maximum width was reduced further (to a fixed `18rem`,
+rather than one that scales with the screen) specifically so the mission
+sentence wraps sooner — "Income from this community-owned turbine helps
+Ambition Lawrence Weston" / "tackle poverty and deprivation locally." /
+"Learn more at ambitionlw.org." now consistently falls across three short
+lines instead of two longer ones. Using a fixed width rather than a
+viewport-relative one means this wrapping is the same on any screen size,
+not just the one it happened to be checked on — verified directly (by
+rendering a hidden clone of the real panel and checking exactly which line
+the word "poverty" lands on) at 1280×720, 1366×768, 1920×1080 and
+2560×1440.
+
 ## Addressing the challenge's own judging criteria
 
 | Criterion | How this concept addresses it |
