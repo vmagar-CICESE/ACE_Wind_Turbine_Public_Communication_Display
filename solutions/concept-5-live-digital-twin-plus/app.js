@@ -132,7 +132,6 @@ const rotorGroupEl = document.getElementById('rotor');
 const fallbackMessageEl = document.getElementById('fallback-message');
 const lifetimeEnergyEl = document.getElementById('lifetime-energy');
 const operatingHoursEl = document.getElementById('operating-hours');
-const availabilityTodayEl = document.getElementById('availability-today');
 
 const explorerToggleEl = document.getElementById('explorer-toggle');
 const explorerPanelEl = document.getElementById('explorer-panel');
@@ -439,12 +438,8 @@ async function loadAvailability() {
     if (Number.isFinite(value)) {
       availabilityValue = value;
       availabilityObservedAtMs = Number.isFinite(observed) ? observed / 1000 : Date.now();
-      availabilityTodayEl.textContent = oneDecimalFormatter.format(value);
-    } else {
-      availabilityTodayEl.textContent = '--';
     }
   } catch (error) {
-    availabilityTodayEl.textContent = '--';
     console.warn('Could not load daily availability:', error);
   }
   refreshExplorerLiveValue();

@@ -119,15 +119,16 @@ rather than just adding empty margin. The main overlay (freshness badge and
 info panel) was widened too (roughly 25% wider), so the lifetime-energy
 sentence wraps across fewer lines.
 
-### 6. Operating hours added to the info panel
+### 6. Operating hours merged into the info panel's main sentence
 
-The info panel now shows three stats instead of two: lifetime energy
-generated, **lifetime operating hours**, and today's availability. Operating
-hours was already being polled (as one of the "best-effort extra" fields
-feeding the explorer panel) — it's now also surfaced in the always-visible
-info panel, directly under the energy figure, since it's a community-value
-number in its own right ("how long has our turbine actually been running
-for?").
+Operating hours was already being polled (as one of the "best-effort extra"
+fields feeding the explorer panel). It's now also surfaced in the
+always-visible info panel — combined into a single sentence with lifetime
+energy ("30,658,529 kWh generated and 23,996 hours in operation since
+29 Mar 2023") rather than as a separate line, keeping the panel to two
+short paragraphs. The separate "today's availability" stat was folded back
+out of this panel in the same pass to keep it concise; it remains available
+as its own signal ("Daily availability") in the explorer panel.
 
 ### 7. Readout moved to the top-right
 
