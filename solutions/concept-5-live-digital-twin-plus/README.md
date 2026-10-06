@@ -3,18 +3,25 @@
 Everything in [Concept 4](../concept-4-live-digital-twin-extended/) — the
 same animated turbine illustration, live info panel and "Explore more
 turbine data" signal/chart panel — refined after a closer look at the
-official ACE reference dashboard and a first round of feedback:
+official ACE reference dashboard and two rounds of feedback:
 
 1. **The turbine moved right** and the text panels on the left were made
    noticeably bigger, so the readout is easier to read from across a room.
 2. **History charts now plot the same "mean" signals the official dashboard
-   plots** (e.g. `active_power_mean`, not a raw instantaneous sample), so a
-   chart here and the same chart on ACE's own dashboard tell the same story.
+   plots** (e.g. `active_power_mean`, not a raw instantaneous sample), **over
+   the same 7-day/1008-record window the dashboard itself uses**, so a chart
+   here and the same chart on ACE's own dashboard tell the same story —
+   this was checked directly against a screenshot of the official dashboard.
 3. **Charts now have real, clearly labelled axes** — gridlines, an actual
    time axis (real clock times/dates) and an actual value axis (real
    numbers with units) — rather than just two corner numbers, closer to how
    [ambitioncommunityenergy.org](https://ambitioncommunityenergy.org/)'s own
    dashboard presents its charts.
+4. **A plain-English note explains negative power readings** (active and
+   reactive) where they appear, since this is a common point of confusion
+   for a non-technical audience.
+5. **The explorer panel is noticeably wider**, giving charts more horizontal
+   room to breathe.
 
 Concept 4 is left completely untouched; this is a separate, additive
 concept.
@@ -31,33 +38,38 @@ were all increased (roughly 15–25%, via the same `clamp()` responsive
 sizing already used elsewhere) so the numbers that matter are legible from
 typical community-centre viewing distances, not just up close.
 
-### 2. Charting the same "mean" signals as the official dashboard
+### 2. Charting the same "mean" signals, over the same window, as the official dashboard
 
 While comparing this concept's "Active power" chart against the official
-ACE dashboard's "Mean active power" chart, the two did not visually match.
-The reason: Concept 4's chart queried `wec_active_power` from the
-`wec_instantaneous` family — genuine single-instant samples, taken once per
-minute for the chart — while the official dashboard plots `active_power_mean`
-from the `wecstd` family, a true pre-averaged mean computed by the turbine's
-own controller. These are different signals that can look meaningfully
-different, especially when the wind is variable.
+ACE dashboard's "Mean active power" chart, the two did not visually match —
+even after an earlier fix already pointed the chart at the correct
+`active_power_mean` field (verified directly against the live API: the
+field's own metadata confirms it is "ENERCON Wecstd field mrwSmpP at array
+index 7", the same field the official dashboard's chart documents itself
+as plotting). The remaining mismatch was the **time window**: this concept
+was charting a 3-hour window while the official dashboard defaults to a
+7-day/1008-record window at 10-minute resolution. A 3-hour window sampled
+during a calm, low-wind spell will understandably look nothing like a
+week that includes windier days.
 
-Four signals now point their *chart* (not their live "right now" value,
-which still comes from the fast instantaneous feed) at the matching wecstd
-mean field instead:
+Four signals now chart the matching wecstd mean field **over the same
+7-day, 10-minute-resolution window the official dashboard uses**:
 
 | Signal | Live value source | Chart source |
 |---|---|---|
-| Wind speed | `wec_wind_speed` (instantaneous) | `wind_speed_mean` (wecstd) |
-| Rotor speed | `wec_rotor_speed` (instantaneous) | `rotor_speed_mean` (wecstd) |
-| Active power | `wec_active_power` (instantaneous) | `active_power_mean` (wecstd) |
-| Reactive power | `wec_reactive_power` (instantaneous) | `reactive_power_mean` (wecstd) |
+| Wind speed | `wec_wind_speed` (instantaneous) | `wind_speed_mean` (wecstd, 7 days, 10-min resolution) |
+| Rotor speed | `wec_rotor_speed` (instantaneous) | `rotor_speed_mean` (wecstd, 7 days, 10-min resolution) |
+| Active power | `wec_active_power` (instantaneous) | `active_power_mean` (wecstd, 7 days, 10-min resolution) |
+| Reactive power | `wec_reactive_power` (instantaneous) | `reactive_power_mean` (wecstd, 7 days, 10-min resolution) |
 
-The chart title now says explicitly what it's showing (e.g. "Mean active
-power — last 3 hours") so this distinction is visible, not hidden. All other
-signals (ones without a wecstd mean counterpart — wind direction, power
-factor, voltages/currents, etc.) are unaffected and keep charting the
-instantaneous feed, as before.
+The live "right now" value above each chart intentionally keeps using the
+fast instantaneous feed — that distinction is real and useful (one number
+answers "what's happening this second", the other "what's the recent
+trend"), and the chart title now says explicitly what it's showing (e.g.
+"Mean active power — last 7 days") so the two are never confused for each
+other. All other signals (ones without a wecstd mean counterpart — wind
+direction, power factor, voltages/currents, etc.) are unaffected and keep
+charting the instantaneous feed over a shorter, 3-hour window, as before.
 
 ### 3. Clearly labelled, gridded chart axes
 
@@ -66,8 +78,9 @@ Each chart now draws:
 - **4 horizontal gridlines with real value labels** (including the unit,
   e.g. "-24 kW"), spanning the data's actual min/max for that signal.
 - **4 vertical tick labels with real clock times** (`HH:MM`, Europe/London)
-  for short windows, or real calendar dates (`D Mon`) for the 14-day daily
-  availability window.
+  for windows of 48 hours or less, or real calendar dates (`D Mon`) for
+  longer windows (the 7-day power/wind/rotor-speed charts, and the 14-day
+  daily availability chart).
 - **A visible axis title line below the chart** stating exactly what's
   plotted and over what period (e.g. "Daily availability — last 14 days").
 
@@ -76,6 +89,28 @@ availability for two weeks) gets a small, symmetric fallback range around
 that value rather than an axis that looks like it's trending upward from a
 single reading — this was checked directly against live data during
 development.
+
+### 4. Explaining negative power readings
+
+Active power and reactive power can both legitimately read negative, which
+is not obvious to a non-technical visitor (and was flagged as confusing
+during testing). A short, plain-English note now appears under the chart
+whenever one of these two signals is selected:
+
+- **Active power**: a small negative reading means the turbine is briefly
+  drawing a little power from the grid for its own systems (e.g. yaw
+  motors) in low wind, rather than generating.
+- **Reactive power**: explained as supporting grid voltage rather than
+  doing useful work directly, and that its sign is independent of whether
+  the turbine is generating active power.
+
+### 5. A wider explorer panel
+
+The "Explore more turbine data" panel's maximum width was increased
+(roughly 50% wider), and the chart itself now scales to fill the full
+width of whatever space is available (via a fixed aspect ratio rather than
+a fixed pixel height), so the extra width actually makes the chart bigger
+rather than just adding empty margin.
 
 ## Addressing the challenge's own judging criteria
 
@@ -135,7 +170,7 @@ others.
 | Air pressure, blade angle | `.../data/wecstd/latest` | 10m | every 60 seconds | Separate, slower poller; matches this family/resolution's recommended cadence |
 | Daily availability | `.../data/wec_availability/latest` | daily | once at load, then hourly | |
 | Turbine configuration | `.../configuration/latest` | — | once at load | Rated capacity for the energy meter |
-| Recent history chart | `.../data/{family}/range` | 60s (3h window, instantaneous or wecstd mean fields) or 10m (24h window, wecstd) or daily (14-day window) | once per dropdown selection | Not polled continuously — only fetched when a visitor picks a new signal |
+| Recent history chart | `.../data/{family}/range` | 60s (3h window, instantaneous fields) or 10m (7-day window for wecstd mean power/wind/rotor-speed fields, or 24h window for air pressure/blade angle) or daily (14-day window, availability) | once per dropdown selection | Not polled continuously — only fetched when a visitor picks a new signal |
 
 All requests are made directly from the browser to
 `https://ace-api.duckdns.org` — no backend/proxy. The page makes at most

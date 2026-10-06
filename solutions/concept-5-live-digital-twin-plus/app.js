@@ -69,7 +69,7 @@ const SIGNAL_CATALOG = [
   // --- Wind & weather ---
   { id: 'wind_speed', group: 'Wind & weather', label: 'Wind speed', unit: 'm/s', decimals: 1,
     source: 'core', fields: ['wec_wind_speed'],
-    chart: { family: 'wecstd', resolution: '60s', hours: 3 }, chartFields: ['wind_speed_mean'], chartLabel: 'Mean wind speed' },
+    chart: { family: 'wecstd', resolution: '10m', hours: 24 * 7 }, chartFields: ['wind_speed_mean'], chartLabel: 'Mean wind speed' },
   { id: 'wind_direction', group: 'Wind & weather', label: 'Wind direction', unit: '°', decimals: 0, compass: true,
     source: 'core', fields: ['wec_wind_direction'], chart: { family: 'wec_instantaneous', resolution: '60s', hours: 3 } },
   { id: 'air_pressure', group: 'Wind & weather', label: 'Air pressure', unit: 'mbar', decimals: 0,
@@ -78,7 +78,7 @@ const SIGNAL_CATALOG = [
   // --- Turbine mechanics ---
   { id: 'rotor_speed', group: 'Turbine mechanics', label: 'Rotor speed', unit: 'rpm', decimals: 1,
     source: 'core', fields: ['wec_rotor_speed'],
-    chart: { family: 'wecstd', resolution: '60s', hours: 3 }, chartFields: ['rotor_speed_mean'], chartLabel: 'Mean rotor speed' },
+    chart: { family: 'wecstd', resolution: '10m', hours: 24 * 7 }, chartFields: ['rotor_speed_mean'], chartLabel: 'Mean rotor speed' },
   { id: 'nacelle_position', group: 'Turbine mechanics', label: 'Nacelle position (heading)', unit: '°', decimals: 0, compass: true,
     source: 'core', fields: ['wec_nacelle_position'], chart: { family: 'wec_instantaneous', resolution: '60s', hours: 3 } },
   { id: 'blade_angle', group: 'Turbine mechanics', label: 'Blade (pitch) angle', unit: '°', decimals: 1,
@@ -89,10 +89,12 @@ const SIGNAL_CATALOG = [
   // --- Power & electrical ---
   { id: 'active_power', group: 'Power & electrical', label: 'Active power', unit: 'kW', decimals: 0,
     source: 'core', fields: ['wec_active_power'],
-    chart: { family: 'wecstd', resolution: '60s', hours: 3 }, chartFields: ['active_power_mean'], chartLabel: 'Mean active power' },
+    chart: { family: 'wecstd', resolution: '10m', hours: 24 * 7 }, chartFields: ['active_power_mean'], chartLabel: 'Mean active power',
+    note: 'A small negative reading is normal — it means the turbine is briefly drawing a little power from the grid for its own systems (e.g. yaw motors) in low wind, rather than generating.' },
   { id: 'reactive_power', group: 'Power & electrical', label: 'Reactive power', unit: 'kvar', decimals: 0,
     source: 'core', fields: ['wec_reactive_power'],
-    chart: { family: 'wecstd', resolution: '60s', hours: 3 }, chartFields: ['reactive_power_mean'], chartLabel: 'Mean reactive power' },
+    chart: { family: 'wecstd', resolution: '10m', hours: 24 * 7 }, chartFields: ['reactive_power_mean'], chartLabel: 'Mean reactive power',
+    note: 'Reactive power (kvar) supports grid voltage rather than doing useful work directly — it can be positive or negative depending on grid conditions, independent of whether the turbine is generating active power.' },
   { id: 'power_factor', group: 'Power & electrical', label: 'Power factor', unit: '', decimals: 2,
     source: 'core', fields: ['wec_power_factor'], chart: { family: 'wec_instantaneous', resolution: '60s', hours: 3 } },
   { id: 'grid_frequency', group: 'Power & electrical', label: 'Grid frequency', unit: 'Hz', decimals: 2,
@@ -141,6 +143,7 @@ const signalChartEl = document.getElementById('signal-chart');
 const chartStatusEl = document.getElementById('chart-status');
 const chartTitleEl = document.getElementById('chart-title');
 const signalLegendEl = document.getElementById('signal-legend');
+const signalNoteEl = document.getElementById('signal-note');
 
 // --- State ---------------------------------------------------------------
 let lastGoodObservedAtMs = null;
@@ -773,6 +776,8 @@ function onSignalChange() {
   refreshExplorerLiveValue();
   renderLegend(signal);
   loadChartFor(signal);
+  signalNoteEl.hidden = !signal.note;
+  signalNoteEl.textContent = signal.note || '';
 }
 
 explorerToggleEl.addEventListener('click', () => {
