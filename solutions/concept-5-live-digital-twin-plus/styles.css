@@ -169,7 +169,9 @@ body {
   gap: 0.6rem;
   align-items: flex-start;
   overflow-y: auto;
-  max-width: min(64ch, 72vw);
+  /* Capped so it can never reach into the top-right readout's own reserved
+     space, however wide either box's content gets, on any screen width. */
+  max-width: min(70.4ch, calc(100vw - min(34ch, 40vw) - 7rem));
 }
 
 .freshness {

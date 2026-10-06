@@ -125,10 +125,10 @@ Operating hours was already being polled (as one of the "best-effort extra"
 fields feeding the explorer panel). It's now also surfaced in the
 always-visible info panel — combined into a single sentence with lifetime
 energy ("30,658,529 kWh generated and 23,996 hours in operation since
-29 Mar 2023") rather than as a separate line, keeping the panel to two
-short paragraphs. The separate "today's availability" stat was folded back
-out of this panel in the same pass to keep it concise; it remains available
-as its own signal ("Daily availability") in the explorer panel.
+2023") rather than as a separate line, keeping the panel to two short
+paragraphs. The separate "today's availability" stat was folded back out of
+this panel in the same pass to keep it concise; it remains available as its
+own signal ("Daily availability") in the explorer panel.
 
 ### 7. Readout moved to the top-right
 
