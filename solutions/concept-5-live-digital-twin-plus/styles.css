@@ -186,9 +186,9 @@ body {
   align-items: flex-start;
   overflow-y: auto;
   /* Capped so it can never reach into the top-right readout's own reserved
-     space (~300px measured, plus margin), nor into the centred title's own
-     reserved half-width, on any screen width. */
-  max-width: min(70.4ch, max(calc(100vw - 20rem - 7rem), 12rem), max(calc(50vw - 14rem), 12rem));
+     space (now narrower, ~12rem box + margin), nor into the centred title's
+     own reserved half-width, on any screen width. */
+  max-width: min(70.4ch, max(calc(100vw - 15rem - 7rem), 12rem), max(calc(50vw - 14rem), 12rem));
 }
 
 .freshness {
@@ -218,8 +218,8 @@ body {
   background: rgba(0, 0, 0, 0.35);
   padding: 0.35em 0.9em;
   border-radius: 8px;
-  font-size: 0.85rem;
-  white-space: nowrap;
+  font-size: 1rem;
+  max-width: 24ch;
   text-align: center;
   flex-shrink: 0;
   margin-right: 1.75rem;

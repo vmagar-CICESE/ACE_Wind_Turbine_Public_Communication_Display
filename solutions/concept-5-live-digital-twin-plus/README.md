@@ -155,15 +155,18 @@ A plain "ACE Wind Turbine" heading now sits at the top-centre of the scene,
 so the screen reads clearly as the turbine's own display even from a
 distance, before a visitor reads any of the live numbers.
 
-### 9. One-line wind readout
+### 9. Wind readout: narrower box, larger text
 
-The wind readout's font size was reduced and wrapping disabled, so "X m/s
-wind from Y · updated HH:MM:SS" always renders as a single line rather than
-wrapping across several short ones. The left-hand info panel's own maximum
-width is calculated (via CSS `calc()`/`min()`/`max()`) to stay clear of both
-the centred title and the top-right readout at any screen width, rather
-than being a fixed guess — checked directly against the rendered values at
-both 1280×720 and 1920×1080.
+The wind readout went through two iterations: first shrunk to fit on a
+single line, then — after a closer look — made narrower again with a
+larger font size, which means it now wraps across two short lines instead
+of one long one. The box's width is fixed (`24ch`) rather than tied to the
+viewport, so it stays a consistent size regardless of screen width. The
+left-hand info panel's own maximum width is calculated (via CSS
+`calc()`/`min()`/`max()`) to stay clear of both the centred title and the
+top-right readout at any screen width, rather than being a fixed guess —
+checked directly against the rendered values at both 1280×720 and
+1920×1080, and re-verified after the readout's width changed.
 
 ### 10. Smaller text, shorter boxes, and a verified no-overlap check
 
