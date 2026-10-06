@@ -131,6 +131,7 @@ const headingValueEl = document.getElementById('heading-value');
 const rotorGroupEl = document.getElementById('rotor');
 const fallbackMessageEl = document.getElementById('fallback-message');
 const lifetimeEnergyEl = document.getElementById('lifetime-energy');
+const operatingHoursEl = document.getElementById('operating-hours');
 const availabilityTodayEl = document.getElementById('availability-today');
 
 const explorerToggleEl = document.getElementById('explorer-toggle');
@@ -324,6 +325,11 @@ function handleLiveData(data) {
     timeZone: 'Europe/London',
   });
   lifetimeEnergyEl.textContent = numberFormatter.format(lifetimeEnergy);
+
+  // Operating hours is a best-effort "extra" field, not a CORE_FIELD — show
+  // it opportunistically, but never let it block the info panel otherwise.
+  const operatingHours = coreCache.wec_operating_hours;
+  operatingHoursEl.textContent = operatingHours?.good ? numberFormatter.format(operatingHours.value) : '--';
 
   const fraction = Math.max(0, Math.min(1, power / ratedCapacityKw));
   meterFillEl.style.height = `${fraction * 100}%`;

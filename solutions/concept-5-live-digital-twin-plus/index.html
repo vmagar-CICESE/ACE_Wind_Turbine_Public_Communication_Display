@@ -36,25 +36,28 @@
       </g>
     </svg>
 
-    <div class="meter" aria-hidden="true">
-      <div class="meter-track">
-        <div class="meter-fill" id="meter-fill"></div>
+    <div class="right-column">
+      <div class="readout">
+        <span id="wind-value">--</span> m/s wind from <span id="heading-value">--</span> · updated <span id="observed-value">--</span>
       </div>
-      <div class="meter-label"><span id="power-value">--</span> kW</div>
-      <div class="meter-sub">of <span id="rated-capacity">4,245</span> kW capacity</div>
+      <div class="meter" aria-hidden="true">
+        <div class="meter-track">
+          <div class="meter-fill" id="meter-fill"></div>
+        </div>
+        <div class="meter-label"><span id="power-value">--</span> kW</div>
+        <div class="meter-sub">of <span id="rated-capacity">4,245</span> kW capacity</div>
+      </div>
     </div>
 
     <div class="overlay">
       <div class="freshness" id="freshness" role="status">Connecting…</div>
-      <div class="readout">
-        <span id="wind-value">--</span> m/s wind from <span id="heading-value">--</span> · updated <span id="observed-value">--</span>
-      </div>
       <div class="fallback-message" id="fallback-message" hidden>
         The turbine is taking a short rest while we reconnect to the live ACE feed — last known reading shown.
       </div>
 
       <div class="info-panel">
         <div class="info-stat"><strong id="lifetime-energy">--</strong> kWh generated since 29 Mar 2023</div>
+        <div class="info-stat"><strong id="operating-hours">--</strong> hours in operation since 29 Mar 2023</div>
         <div class="info-stat"><strong id="availability-today">--</strong>% available today</div>
         <p class="mission">
           Income from this community-owned turbine helps <strong>Ambition Lawrence Weston</strong>

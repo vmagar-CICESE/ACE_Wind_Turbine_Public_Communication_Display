@@ -20,8 +20,13 @@ official ACE reference dashboard and two rounds of feedback:
 4. **A plain-English note explains negative power readings** (active and
    reactive) where they appear, since this is a common point of confusion
    for a non-technical audience.
-5. **The explorer panel is noticeably wider**, giving charts more horizontal
-   room to breathe.
+5. **The explorer panel and the info panel are both noticeably wider**,
+   giving charts and text more horizontal room to breathe.
+6. **Operating hours (lifetime) now appears in the main info panel**,
+   alongside lifetime energy and today's availability, not only in the
+   explorer panel.
+7. **The wind/heading readout moved to the top-right**, next to the energy
+   meter, so the left side of the screen isn't carrying all of the text.
 
 Concept 4 is left completely untouched; this is a separate, additive
 concept.
@@ -104,13 +109,35 @@ whenever one of these two signals is selected:
   doing useful work directly, and that its sign is independent of whether
   the turbine is generating active power.
 
-### 5. A wider explorer panel
+### 5. A wider explorer panel and info panel
 
 The "Explore more turbine data" panel's maximum width was increased
 (roughly 50% wider), and the chart itself now scales to fill the full
 width of whatever space is available (via a fixed aspect ratio rather than
 a fixed pixel height), so the extra width actually makes the chart bigger
-rather than just adding empty margin.
+rather than just adding empty margin. The main overlay (freshness badge and
+info panel) was widened too (roughly 25% wider), so the lifetime-energy
+sentence wraps across fewer lines.
+
+### 6. Operating hours added to the info panel
+
+The info panel now shows three stats instead of two: lifetime energy
+generated, **lifetime operating hours**, and today's availability. Operating
+hours was already being polled (as one of the "best-effort extra" fields
+feeding the explorer panel) — it's now also surfaced in the always-visible
+info panel, directly under the energy figure, since it's a community-value
+number in its own right ("how long has our turbine actually been running
+for?").
+
+### 7. Readout moved to the top-right
+
+The "X m/s wind from Y · updated Z" readout previously sat in the same
+left-hand column as the freshness badge and info panel, leaving the whole
+right side of the screen with nothing but the energy meter. It's now a
+standalone box at the top-right, grouped with the energy meter in a shared
+right-hand column (so the two can never overlap regardless of their exact
+content length or the screen's aspect ratio), which balances the layout
+between both sides of the screen.
 
 ## Addressing the challenge's own judging criteria
 

@@ -110,10 +110,19 @@ body {
   transition: transform 1.2s ease-out;
 }
 
-.meter {
+.right-column {
   position: absolute;
-  right: clamp(1rem, 3vw, 2.5rem);
-  top: 18%;
+  right: clamp(1rem, 3vw, 2rem);
+  top: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.meter {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,7 +169,7 @@ body {
   gap: 0.6rem;
   align-items: flex-start;
   overflow-y: auto;
-  max-width: min(52ch, 62vw);
+  max-width: min(64ch, 72vw);
 }
 
 .freshness {
@@ -191,6 +200,9 @@ body {
   padding: 0.35em 0.9em;
   border-radius: 8px;
   font-size: 1.15rem;
+  max-width: min(34ch, 40vw);
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .fallback-message {
