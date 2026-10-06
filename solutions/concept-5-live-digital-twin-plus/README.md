@@ -27,6 +27,9 @@ official ACE reference dashboard and two rounds of feedback:
    explorer panel.
 7. **The wind/heading readout moved to the top-right**, next to the energy
    meter, so the left side of the screen isn't carrying all of the text.
+8. **A centred "ACE Wind Turbine" title** now sits at the top of the scene.
+9. **The wind readout always fits on one line** (smaller font, no wrapping),
+   instead of wrapping across several short lines.
 
 Concept 4 is left completely untouched; this is a separate, additive
 concept.
@@ -138,7 +141,25 @@ right side of the screen with nothing but the energy meter. It's now a
 standalone box at the top-right, grouped with the energy meter in a shared
 right-hand column (so the two can never overlap regardless of their exact
 content length or the screen's aspect ratio), which balances the layout
-between both sides of the screen.
+between both sides of the screen. It's shifted slightly left of the energy
+meter (via its own margin) and its text is centred rather than
+right-aligned.
+
+### 8. A centred title
+
+A plain "ACE Wind Turbine" heading now sits at the top-centre of the scene,
+so the screen reads clearly as the turbine's own display even from a
+distance, before a visitor reads any of the live numbers.
+
+### 9. One-line wind readout
+
+The wind readout's font size was reduced and wrapping disabled, so "X m/s
+wind from Y · updated HH:MM:SS" always renders as a single line rather than
+wrapping across several short ones. The left-hand info panel's own maximum
+width is calculated (via CSS `calc()`/`min()`/`max()`) to stay clear of both
+the centred title and the top-right readout at any screen width, rather
+than being a fixed guess — checked directly against the rendered values at
+both 1280×720 and 1920×1080.
 
 ## Addressing the challenge's own judging criteria
 
