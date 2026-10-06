@@ -203,8 +203,9 @@ body {
   border-radius: 8px;
   font-size: 1.15rem;
   max-width: min(34ch, 40vw);
-  text-align: right;
+  text-align: center;
   flex-shrink: 0;
+  margin-right: 1.75rem;
 }
 
 .fallback-message {
