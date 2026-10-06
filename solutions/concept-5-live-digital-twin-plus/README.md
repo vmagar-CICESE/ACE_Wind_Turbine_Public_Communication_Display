@@ -30,6 +30,10 @@ official ACE reference dashboard and two rounds of feedback:
 8. **A centred "ACE Wind Turbine" title** now sits at the top of the scene.
 9. **The wind readout always fits on one line** (smaller font, no wrapping),
    instead of wrapping across several short lines.
+10. **Info panel and explorer panel text are both smaller**, reducing the
+    vertical height of both boxes (most noticeably the info panel, which
+    is now a visibly shorter box) and leaving a larger safety margin before
+    an expanded explorer panel could ever reach the info panel above it.
 
 Concept 4 is left completely untouched; this is a separate, additive
 concept.
@@ -160,6 +164,28 @@ width is calculated (via CSS `calc()`/`min()`/`max()`) to stay clear of both
 the centred title and the top-right readout at any screen width, rather
 than being a fixed guess — checked directly against the rendered values at
 both 1280×720 and 1920×1080.
+
+### 10. Smaller text, shorter boxes, and a verified no-overlap check
+
+Both the info panel and the explorer panel's font sizes were reduced
+(roughly 15–20%, across every element — labels, the live value, the
+chart title, the legend, the signal note, the small print) so both boxes
+take up noticeably less vertical space. This matters because the info
+panel (top-left) and the explorer panel (bottom-left, growing upward when
+expanded) are two independently positioned elements with no built-in
+coordination between them — on a short enough screen, or with enough
+explorer content, the two could in principle meet.
+
+This was checked rigorously, not just by eye: a hidden clone of each real
+panel was rendered at the exact width it would have on a 1280×720 and a
+1920×1080 screen (computed from the same CSS formulas the live page uses),
+and its true, unclipped content height was measured directly by the
+browser's own layout engine. For the tallest realistic case — the "Active
+power" signal, which shows a note *and* a full chart — the explorer panel's
+existing height cap (`max-height: min(55vh, 460px)`, with internal
+scrolling as a fallback, the same technique Concept 3 already uses for its
+own overlay) keeps a comfortable **~60px gap at 720p and ~355px at 1080p**
+between the two boxes. No overlap occurs at either resolution.
 
 ## Addressing the challenge's own judging criteria
 
