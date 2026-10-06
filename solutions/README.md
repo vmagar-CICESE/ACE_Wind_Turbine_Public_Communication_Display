@@ -1,6 +1,6 @@
 # Solutions — Challenge 5: ACE Public Communication Display
 
-Five independent, fully working concepts for the community-centre screen,
+Six independent, fully working concepts for the community-centre screen,
 each in its own self-contained folder. Every concept uses **live data from
 the real ACE API** (`https://ace-api.duckdns.org`), is a static site with no
 backend/build step, and follows the challenge's required resilience rules
@@ -13,6 +13,7 @@ backend/build step, and follows the challenge's required resilience rules
 | 3 | **ACE Live Wind: Digital Twin** | [concept-3-live-digital-twin/](concept-3-live-digital-twin/) | Watch the turbine "work" — an animated illustration driven entirely by live data | Full-screen animated data artwork / digital twin |
 | 4 | **ACE Live Wind: Digital Twin (Extended)** | [concept-4-live-digital-twin-extended/](concept-4-live-digital-twin-extended/) | Concept 3, plus an optional panel to explore 17 further live signals | Full-screen digital twin + collapsible data explorer |
 | 5 | **ACE Live Wind: Digital Twin (Plus)** | [concept-5-live-digital-twin-plus/](concept-5-live-digital-twin-plus/) | Concept 4, refined: bigger text, a repositioned turbine, and history charts with real labelled axes that match the official ACE dashboard's own "mean" signals | Full-screen digital twin + collapsible data explorer with labelled charts |
+| 6 | **ACE Live Wind: Digital Twin (Branded)** | [concept-6-live-digital-twin-branded/](concept-6-live-digital-twin-branded/) | Concept 4, plus a title and a credits/links box matching the official ACE dashboard's own header | Full-screen digital twin + collapsible data explorer + branded credits panel |
 
 Each folder has its own README with full details — endpoints used, freshness
 rules, reproduction steps, licence and data credit. This page just compares
@@ -20,11 +21,11 @@ them and explains the shared setup.
 
 ## Quick preview
 
-| Concept 1 | Concept 2 | Concept 3 | Concept 4 | Concept 5 |
-|---|---|---|---|---|
-| ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) |
+| Concept 1 | Concept 2 | Concept 3 | Concept 4 | Concept 5 | Concept 6 |
+|---|---|---|---|---|---|
+| ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) | ![Concept 6 screenshot](concept-6-live-digital-twin-branded/screenshot.png) |
 
-## How the five differ
+## How the six differ
 
 - **Concept 1** is the most information-dense at a glance: power, wind,
   rotor speed, compass heading, lifetime energy, rated capacity and today's
@@ -61,14 +62,23 @@ them and explains the shared setup.
   Its README also explicitly maps its design choices to the challenge's own
   judging criteria. Best as the most refined, most dashboard-comparable
   version of the digital-twin family.
+- **Concept 6** takes Concept 4 (not Concept 5) and adds a centred "ACE Wind
+  Turbine" title plus a credits/links box, bottom-right, that mirrors the
+  official ACE dashboard's own header card — "Visit the ACE website",
+  "Dataset and citation" and "Use the data or build a dashboard" links,
+  restyled to fit this concept's dark full-screen theme. Best if the
+  priority is Concept 4's balance of calm animation and optional depth,
+  made to feel visibly "branded" as ACE's own official display and making
+  the official dashboard/dataset one click away for anyone who wants to go
+  further.
 
-All five satisfy the same minimum requirements (live ACE data, screen-ready,
+All six satisfy the same minimum requirements (live ACE data, screen-ready,
 non-technical audience, open licence with reproduction instructions) — the
 right choice depends on which judging criterion the community wants to lead
-with. They could also be combined (e.g. Concept 3/4/5 as an ambient "idle"
+with. They could also be combined (e.g. Concept 3/4/5/6 as an ambient "idle"
 state cycling into Concept 2's slides every so often).
 
-## Shared setup, common to all five
+## Shared setup, common to all six
 
 - **No build step, no dependencies.** Each folder is plain HTML/CSS/JS. Serve
   any one of them with:
@@ -91,29 +101,29 @@ state cycling into Concept 2's slides every so often).
   `ace-live.mjs` helper (`createAcePoller`) from the challenge repository
   unmodified, so polling behaviour (timeouts, back-off, `Retry-After`
   handling, pause-when-hidden) is identical and already reviewed by the
-  challenge organisers. Concepts 4 and 5 widen their single core request to
-  carry 18 fields instead of 5, rather than adding a second continuous
+  challenge organisers. Concepts 4, 5 and 6 widen their single core request
+  to carry 18 fields instead of 5, rather than adding a second continuous
   poller, so the page still makes at most one request per second for its
   live animation.
 
-- **Honest data only.** None of the five concepts invent a "homes powered"
+- **Honest data only.** None of the six concepts invent a "homes powered"
   or £-value conversion — per the challenge's own guidance, those would be
   invented community-impact figures ACE has not published. Instead they use
   real API values (power, energy, availability, operating hours) plus ACE/
-  ALW's own public mission statement. Concepts 4 and 5 go a step further and
-  exclude several wecstd weather fields found to always return a constant
-  sentinel value on this turbine (see their READMEs) rather than present
-  them as if they were real sensor readings. Concept 5 additionally checked
-  that its history charts plot the same statistically meaningful "mean"
-  fields the official ACE dashboard plots, rather than a technically
+  ALW's own public mission statement. Concepts 4, 5 and 6 go a step further
+  and exclude several wecstd weather fields found to always return a
+  constant sentinel value on this turbine (see their READMEs) rather than
+  present them as if they were real sensor readings. Concept 5 additionally
+  checked that its history charts plot the same statistically meaningful
+  "mean" fields the official ACE dashboard plots, rather than a technically
   different (if superficially similar) raw instantaneous sample.
 
 - **Same freshness model.** A reading older than 15 seconds is marked stale;
   if the API fails, the last good reading is retained and a clearly labelled
-  offline state is shown (verified for all five by deliberately blocking the
+  offline state is shown (verified for all six by deliberately blocking the
   API during testing — see each concept's README).
 
-## Data and licensing (applies to all five)
+## Data and licensing (applies to all six)
 
 Live and historical turbine data: **ACE Wind Turbine Data**, Plumley,
 Charlie; Garrad, Andrew; Burke, Wilf; Jonsson, Christian; Smirthwaite,
@@ -129,7 +139,7 @@ Each concept's own source code is released under the MIT License (see the
 
 ## Background materials
 
-All five concepts were built from the research gathered in
+All six concepts were built from the research gathered in
 [../materials/](../materials/) — the API reference, sample responses, and
 official challenge repository guides. See
 [../materials/README.md](../materials/README.md) for that reference material.
