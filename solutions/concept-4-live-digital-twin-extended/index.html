@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ACE Live Wind — Digital Twin (Extended)</title>
+  <meta name="description" content="A live animated illustration of the Ambition Community Energy (ACE) wind turbine in Lawrence Weston, driven by real-time ACE API data, with an optional panel to explore additional live turbine signals." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="scene" id="scene">
+    <div class="sky" id="sky"></div>
+    <div class="wind-layer" id="wind-layer" aria-hidden="true"></div>
+
+    <svg class="landscape" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img"
+         aria-label="Animated illustration of the ACE wind turbine overlooking Lawrence Weston">
+      <path class="hill" d="M0,900 L0,800 Q420,705 800,758 T1600,735 L1600,900 Z" />
+
+      <g class="houses">
+        <g transform="translate(120,750)"><rect width="70" height="46" class="house-body" /><polygon points="0,0 35,-26 70,0" class="house-roof" /></g>
+        <g transform="translate(210,768)"><rect width="56" height="40" class="house-body" /><polygon points="0,0 28,-22 56,0" class="house-roof" /></g>
+        <g transform="translate(290,750)"><rect width="66" height="46" class="house-body" /><polygon points="0,0 33,-24 66,0" class="house-roof" /></g>
+        <g transform="translate(1340,747)"><rect width="60" height="44" class="house-body" /><polygon points="0,0 30,-24 60,0" class="house-roof" /></g>
+        <g transform="translate(1420,768)"><rect width="50" height="38" class="house-body" /><polygon points="0,0 25,-20 50,0" class="house-roof" /></g>
+      </g>
+
+      <rect x="791" y="393" width="18" height="450" rx="6" class="tower" />
+      <g id="yaw-group">
+        <rect x="755" y="372" width="90" height="39" rx="12" class="nacelle" />
+        <g id="rotor" class="rotor">
+          <path class="blade" d="M800,393 C779,327 779,246 800,198 C821,246 821,327 800,393 Z" />
+          <path class="blade" d="M800,393 C779,327 779,246 800,198 C821,246 821,327 800,393 Z" transform="rotate(120 800 393)" />
+          <path class="blade" d="M800,393 C779,327 779,246 800,198 C821,246 821,327 800,393 Z" transform="rotate(240 800 393)" />
+          <circle cx="800" cy="393" r="15" class="hub" />
+        </g>
+      </g>
+    </svg>
+
+    <div class="meter" aria-hidden="true">
+      <div class="meter-track">
+        <div class="meter-fill" id="meter-fill"></div>
+      </div>
+      <div class="meter-label"><span id="power-value">--</span> kW</div>
+      <div class="meter-sub">of <span id="rated-capacity">4,245</span> kW capacity</div>
+    </div>
+
+    <div class="overlay">
+      <div class="freshness" id="freshness" role="status">Connecting…</div>
+      <div class="readout">
+        <span id="wind-value">--</span> m/s wind from <span id="heading-value">--</span> · updated <span id="observed-value">--</span>
+      </div>
+      <div class="fallback-message" id="fallback-message" hidden>
+        The turbine is taking a short rest while we reconnect to the live ACE feed — last known reading shown.
+      </div>
+
+      <div class="info-panel">
+        <div class="info-stat"><strong id="lifetime-energy">--</strong> kWh generated since 29 Mar 2023</div>
+        <div class="info-stat"><strong id="availability-today">--</strong>% available today</div>
+        <p class="mission">
+          Income from this community-owned turbine helps <strong>Ambition Lawrence Weston</strong>
+          tackle poverty and deprivation in the local area.
+          <a href="https://www.ambitionlw.org/" target="_blank" rel="noopener">Learn more at ambitionlw.org</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="explorer" id="explorer">
+      <button type="button" class="explorer-toggle" id="explorer-toggle" aria-expanded="false" aria-controls="explorer-panel">
+        📊 Explore more turbine data
+      </button>
+      <div class="explorer-panel" id="explorer-panel" hidden>
+        <label class="explorer-label" for="signal-select">Choose a signal</label>
+        <select id="signal-select" class="explorer-select"></select>
+
+        <div class="explorer-value-row">
+          <span class="explorer-value" id="signal-value">--</span>
+          <span class="explorer-unit" id="signal-unit"></span>
+        </div>
+        <div class="explorer-freshness" id="signal-freshness">--</div>
+
+        <div class="explorer-chart-wrap">
+          <svg id="signal-chart" class="explorer-chart" viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-label="Recent history chart for the selected signal"></svg>
+          <div class="explorer-chart-status" id="chart-status">Loading history…</div>
+        </div>
+        <div class="explorer-legend" id="signal-legend" hidden></div>
+
+        <p class="explorer-note">
+          History is a recent sample from the live ACE feed, not a guarantee of every reading.
+          See this concept's README for each signal's exact source, resolution and update cadence.
+        </p>
+      </div>
+    </div>
+
+    <div class="credit-corner">
+      Live data from <a href="https://ambitioncommunityenergy.org/" target="_blank" rel="noopener">Ambition Community Energy</a>
+      · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>
+      · <a href="https://doi.org/10.5281/zenodo.22662372" target="_blank" rel="noopener">DOI 10.5281/zenodo.22662372</a>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
