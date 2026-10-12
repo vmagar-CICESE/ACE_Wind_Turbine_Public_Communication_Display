@@ -1,6 +1,6 @@
 # Solutions — Challenge 5: ACE Public Communication Display
 
-Six independent, fully working concepts for the community-centre screen,
+Seven independent, fully working concepts for the community-centre screen,
 each in its own self-contained folder. Every concept uses **live data from
 the real ACE API** (`https://ace-api.duckdns.org`), is a static site with no
 backend/build step, and follows the challenge's required resilience rules
@@ -14,6 +14,7 @@ backend/build step, and follows the challenge's required resilience rules
 | 4 | **ACE Live Wind: Digital Twin (Extended)** | [concept-4-live-digital-twin-extended/](concept-4-live-digital-twin-extended/) | Concept 3, plus an optional panel to explore 17 further live signals | Full-screen digital twin + collapsible data explorer |
 | 5 | **ACE Live Wind: Digital Twin (Plus)** | [concept-5-live-digital-twin-plus/](concept-5-live-digital-twin-plus/) | Concept 4, refined: bigger text, a repositioned turbine, and history charts with real labelled axes that match the official ACE dashboard's own "mean" signals | Full-screen digital twin + collapsible data explorer with labelled charts |
 | 6 | **ACE Live Wind: Digital Twin (Branded)** | [concept-6-live-digital-twin-branded/](concept-6-live-digital-twin-branded/) | Concept 4, plus a title and a credits/links box matching the official ACE dashboard's own header | Full-screen digital twin + collapsible data explorer + branded credits panel |
+| 7 | **ACE Live Wind: Digital Twin (Community Pop-ups)** | [concept-7-live-digital-twin-popups/](concept-7-live-digital-twin-popups/) | Concept 6, plus right-hand interactive "Why?" & community impact pop-ups (WHO health link, ALW wealth, turbine scale, grid, clean air) | Full-screen digital twin + collapsible explorer + right-hand pop-up story dock |
 
 Each folder has its own README with full details — endpoints used, freshness
 rules, reproduction steps, licence and data credit. This page just compares
@@ -21,11 +22,11 @@ them and explains the shared setup.
 
 ## Quick preview
 
-| Concept 1 | Concept 2 | Concept 3 | Concept 4 | Concept 5 | Concept 6 |
-|---|---|---|---|---|---|
-| ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) | ![Concept 6 screenshot](concept-6-live-digital-twin-branded/screenshot.png) |
+| Concept 1 | Concept 2 | Concept 3 | Concept 4 | Concept 5 | Concept 6 | Concept 7 |
+|---|---|---|---|---|---|---|
+| ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) | ![Concept 6 screenshot](concept-6-live-digital-twin-branded/screenshot.png) | ![Concept 7 screenshot](concept-7-live-digital-twin-popups/screenshot.png) |
 
-## How the six differ
+## How the seven differ
 
 - **Concept 1** is the most information-dense at a glance: power, wind,
   rotor speed, compass heading, lifetime energy, rated capacity and today's
@@ -71,14 +72,23 @@ them and explains the shared setup.
   made to feel visibly "branded" as ACE's own official display and making
   the official dashboard/dataset one click away for anyone who wants to go
   further.
+- **Concept 7** takes Concept 6 and introduces an interactive **right-hand
+  Story & Impact Dock** (Option B) specifically tailored for a community centre
+  screen. In passive mode, it gently auto-cycles across five curated community
+  questions every 14 seconds; in interactive mode, tapping any topic pill or
+  "Read full story" opens a rich, accessible pop-up overlay modal detailing
+  **why clean energy is important** (quoting the World Health Organization on
+  SDG 7 / SDG 3 / SDG 1), how ACE's revenue stays in Lawrence Weston to fight
+  fuel poverty, how big the turbine is, where the electricity flows, and how
+  clean air protects respiratory health in Bristol.
 
-All six satisfy the same minimum requirements (live ACE data, screen-ready,
+All seven satisfy the same minimum requirements (live ACE data, screen-ready,
 non-technical audience, open licence with reproduction instructions) — the
 right choice depends on which judging criterion the community wants to lead
-with. They could also be combined (e.g. Concept 3/4/5/6 as an ambient "idle"
+with. They could also be combined (e.g. Concept 3/4/5/6/7 as an ambient "idle"
 state cycling into Concept 2's slides every so often).
 
-## Shared setup, common to all six
+## Shared setup, common to all seven
 
 - **No build step, no dependencies.** Each folder is plain HTML/CSS/JS. Serve
   any one of them with:
@@ -110,7 +120,7 @@ state cycling into Concept 2's slides every so often).
   or £-value conversion — per the challenge's own guidance, those would be
   invented community-impact figures ACE has not published. Instead they use
   real API values (power, energy, availability, operating hours) plus ACE/
-  ALW's own public mission statement. Concepts 4, 5 and 6 go a step further
+  ALW's own public mission statement. Concepts 4, 5, 6 and 7 go a step further
   and exclude several wecstd weather fields found to always return a
   constant sentinel value on this turbine (see their READMEs) rather than
   present them as if they were real sensor readings. Concept 5 additionally
@@ -120,10 +130,10 @@ state cycling into Concept 2's slides every so often).
 
 - **Same freshness model.** A reading older than 15 seconds is marked stale;
   if the API fails, the last good reading is retained and a clearly labelled
-  offline state is shown (verified for all six by deliberately blocking the
+  offline state is shown (verified for all concepts by deliberately blocking the
   API during testing — see each concept's README).
 
-## Data and licensing (applies to all six)
+## Data and licensing (applies to all seven)
 
 Live and historical turbine data: **ACE Wind Turbine Data**, Plumley,
 Charlie; Garrad, Andrew; Burke, Wilf; Jonsson, Christian; Smirthwaite,
@@ -139,7 +149,7 @@ Each concept's own source code is released under the MIT License (see the
 
 ## Background materials
 
-All six concepts were built from the research gathered in
+All concepts were built from the research gathered in
 [../materials/](../materials/) — the API reference, sample responses, and
 official challenge repository guides. See
 [../materials/README.md](../materials/README.md) for that reference material.
