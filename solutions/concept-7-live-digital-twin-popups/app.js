@@ -454,6 +454,7 @@ function handleLiveData(data) {
   const rotorRpm = coreCache.wec_rotor_speed.value;
   const heading = coreCache.wec_nacelle_position.value;
   const lifetimeEnergy = coreCache.wec_energy_exported.value;
+  const lifetimeEnergyMwh = Math.round(lifetimeEnergy / 1000);
 
   const oldestObservedMicros = Math.min(...CORE_FIELDS.map((f) => observedAt[f][0]));
   lastGoodObservedAtMs = oldestObservedMicros / 1000;
@@ -463,7 +464,7 @@ function handleLiveData(data) {
   observedEl.textContent = new Date(lastGoodObservedAtMs).toLocaleTimeString('en-GB', {
     timeZone: 'Europe/London',
   });
-  lifetimeEnergyEl.textContent = numberFormatter.format(lifetimeEnergy);
+  lifetimeEnergyEl.textContent = numberFormatter.format(lifetimeEnergyMwh);
 
   const yawOffsetPx = ((heading - 180) / 180) * 8;
   yawGroupEl.setAttribute('transform', `translate(${yawOffsetPx.toFixed(1)}, 0)`);
