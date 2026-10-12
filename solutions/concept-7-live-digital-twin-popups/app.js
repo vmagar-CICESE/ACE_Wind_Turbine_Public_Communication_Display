@@ -554,7 +554,9 @@ async function loadStaticConfiguration() {
     const nominalPower = data.changes?.find((c) => c.signal === 'wec_nominal_power')?.value;
     if (Number.isFinite(nominalPower)) {
       ratedCapacityKw = nominalPower;
-      ratedCapacityEl.textContent = numberFormatter.format(nominalPower);
+      if (ratedCapacityEl) {
+        ratedCapacityEl.textContent = numberFormatter.format(nominalPower);
+      }
     }
   } catch (error) {
     console.warn('Could not refresh static turbine configuration; using fallback rated capacity:', error);
