@@ -176,7 +176,7 @@ body {
 .overlay {
   position: absolute;
   left: clamp(1rem, 3vw, 2rem);
-  top: clamp(1rem, 3vw, 2rem);
+  top: clamp(3rem, 6.5vh, 5rem);
   bottom: clamp(1rem, 3vw, 2rem);
   display: flex;
   flex-direction: column;
