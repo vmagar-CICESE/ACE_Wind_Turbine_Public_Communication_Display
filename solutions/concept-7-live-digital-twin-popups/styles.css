@@ -119,22 +119,17 @@ body {
 
 .tower-power-text {
   font-family: inherit;
-  font-size: 18px;
-  fill: #ffffff;
+  font-size: 20px;
+  fill: var(--good);
   pointer-events: none;
 }
 
-.tower-power-val {
+.tower-power-val,
+.tower-power-unit {
   fill: var(--good);
   font-weight: 800;
   font-size: 20px;
-}
-
-.tower-power-unit {
-  fill: #cfe0d6;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .nacelle {
@@ -436,7 +431,7 @@ body {
 .story-dock {
   position: absolute;
   right: clamp(1rem, 3vw, 2rem);
-  top: clamp(3rem, 6.5vh, 5rem);
+  top: clamp(5.2rem, 10vh, 7rem);
   max-width: min(34ch, 30vw);
   background: rgba(8, 20, 16, 0.72);
   backdrop-filter: blur(12px);
