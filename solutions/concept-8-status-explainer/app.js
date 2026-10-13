@@ -30,9 +30,7 @@ const AVAILABILITY_ENDPOINT =
   `?resolution=daily&fields=availability&limit=1`;
 
 const WEC_CONFIG_ENDPOINT = `${API_BASE}/v1/sites/${SITE}/assets/${ASSET}/configuration/latest`;
-
-const STATUS_EVENTS_ENDPOINT =
-  `${API_BASE}/v1/sites/${SITE}/assets/${ASSET}/events/status/latest?limit=1`;
+const SITE_CONFIG_ENDPOINT = `${API_BASE}/v1/sites/${SITE}/configuration/latest`;
 
 const STALE_AFTER_MS = 15_000;
 const WECSTD_STALE_AFTER_MS = 20 * 60 * 1000;
@@ -301,14 +299,13 @@ const statusDockBodyEl = document.getElementById('status-dock-body');
 const statusDockIconEl = document.getElementById('status-dock-icon');
 const statusDockHeadlineEl = document.getElementById('status-dock-headline');
 const statusDockExplainEl = document.getElementById('status-dock-explain');
-const statusDockRawToggleEl = document.getElementById('status-dock-raw-toggle');
-const statusDockRawEl = document.getElementById('status-dock-raw');
-const rawMainStatusEl = document.getElementById('raw-main-status');
-const rawSubstatusEl = document.getElementById('raw-substatus');
-const rawFaultFlagEl = document.getElementById('raw-fault-flag');
-const rawWarningFlagEl = document.getElementById('raw-warning-flag');
-const rawServiceFlagEl = document.getElementById('raw-service-flag');
-const rawObservedAtEl = document.getElementById('raw-observed-at');
+const statusDockSpecsToggleEl = document.getElementById('status-dock-specs-toggle');
+const statusDockSpecsEl = document.getElementById('status-dock-specs');
+const specModelEl = document.getElementById('spec-model');
+const specSerialEl = document.getElementById('spec-serial');
+const specPowerEl = document.getElementById('spec-power');
+const specCommissionedEl = document.getElementById('spec-commissioned');
+const specLocationEl = document.getElementById('spec-location');
 
 // --- State ---------------------------------------------------------------
 let lastGoodObservedAtMs = null;
@@ -331,8 +328,7 @@ let isUserHoveringDock = false;
 let isModalOpen = false;
 
 // Status explainer state
-let rawPanelOpen = false;
-let rawPanelTimer = null;
+let wecConfigChangesCache = null;
 
 const numberFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 });
 const oneDecimalFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
@@ -500,27 +496,47 @@ function updateStatusDockOfflineVisual(isOffline) {
   }
 }
 
-async function loadStatusEventOnce() {
+async function loadTurbineSpecsOnce() {
   try {
-    const response = await fetch(STATUS_EVENTS_ENDPOINT);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    const event = data.events?.[0];
-    if (!event) throw new Error('No status events returned');
-    const values = event.values || {};
-    const formatFlag = (flag) => (Number.isFinite(flag) ? (flag ? 'Set' : 'Clear') : '--');
-    rawMainStatusEl.textContent = Number.isFinite(values.main_status) ? values.main_status : '--';
-    rawSubstatusEl.textContent = Number.isFinite(values.substatus) ? values.substatus : '--';
-    rawFaultFlagEl.textContent = formatFlag(values.fault_message_flag);
-    rawWarningFlagEl.textContent = formatFlag(values.warning_message_flag);
-    rawServiceFlagEl.textContent = formatFlag(values.service_flag);
-    const observedMs = Number.isFinite(event.observed_at) ? event.observed_at / 1000 : null;
-    rawObservedAtEl.textContent = observedMs
-      ? new Date(observedMs).toLocaleString('en-GB', { timeZone: 'Europe/London' })
+    const [wecResponse, siteResponse] = await Promise.all([
+      wecConfigChangesCache ? Promise.resolve(null) : fetch(WEC_CONFIG_ENDPOINT),
+      fetch(SITE_CONFIG_ENDPOINT),
+    ]);
+
+    let changes = wecConfigChangesCache;
+    if (wecResponse) {
+      if (!wecResponse.ok) throw new Error(`HTTP ${wecResponse.status}`);
+      const wecData = await wecResponse.json();
+      changes = wecData.changes || [];
+      wecConfigChangesCache = changes;
+    }
+
+    const findValue = (list, signal) => list?.find((c) => c.signal === signal)?.value;
+    const model = findValue(changes, 'wec_type');
+    const serial = findValue(changes, 'wec_serial_number');
+    const nominalPower = findValue(changes, 'wec_nominal_power');
+    const availabilityStart = findValue(changes, 'wec_availability_start');
+
+    specModelEl.textContent = model || '--';
+    specSerialEl.textContent = serial || '--';
+    specPowerEl.textContent = Number.isFinite(nominalPower)
+      ? `${numberFormatter.format(nominalPower)} kW`
       : '--';
+    specCommissionedEl.textContent = availabilityStart
+      ? new Date(availabilityStart).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'Europe/London',
+        })
+      : '--';
+
+    if (!siteResponse.ok) throw new Error(`HTTP ${siteResponse.status}`);
+    const siteData = await siteResponse.json();
+    const locationName = findValue(siteData.changes, 'location_name');
+    specLocationEl.textContent = locationName || '--';
   } catch (error) {
-    rawObservedAtEl.textContent = 'Unavailable';
-    console.warn('Could not load turbine status event log:', error);
+    console.warn('Could not load turbine specs:', error);
   }
 }
 
@@ -679,7 +695,8 @@ async function loadStaticConfiguration() {
     const response = await fetch(WEC_CONFIG_ENDPOINT);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    const nominalPower = data.changes?.find((c) => c.signal === 'wec_nominal_power')?.value;
+    wecConfigChangesCache = data.changes || [];
+    const nominalPower = wecConfigChangesCache.find((c) => c.signal === 'wec_nominal_power')?.value;
     if (Number.isFinite(nominalPower)) {
       ratedCapacityKw = nominalPower;
       if (ratedCapacityEl) {
@@ -1132,23 +1149,15 @@ statusDockToggleEl.addEventListener('click', () => {
   statusDockBodyEl.hidden = expanded;
 });
 
-statusDockRawToggleEl.addEventListener('click', () => {
-  const expanded = statusDockRawToggleEl.getAttribute('aria-expanded') === 'true';
+statusDockSpecsToggleEl.addEventListener('click', () => {
+  const expanded = statusDockSpecsToggleEl.getAttribute('aria-expanded') === 'true';
   const nowExpanded = !expanded;
-  statusDockRawToggleEl.setAttribute('aria-expanded', String(nowExpanded));
-  statusDockRawEl.hidden = !nowExpanded;
-  statusDockRawToggleEl.textContent = nowExpanded ? 'Hide technical status log ▴' : 'Show technical status log ▾';
-  rawPanelOpen = nowExpanded;
-  clearInterval(rawPanelTimer);
-  if (nowExpanded) {
-    loadStatusEventOnce();
-    // This endpoint has no API-recommended refresh interval (it's not a data
-    // family); 5 minutes is a deliberately conservative choice for a
-    // secondary, collapsed-by-default diagnostic panel. Only polls while
-    // the panel is open and the tab is visible.
-    rawPanelTimer = setInterval(() => {
-      if (!document.hidden) loadStatusEventOnce();
-    }, 5 * 60 * 1000);
+  statusDockSpecsToggleEl.setAttribute('aria-expanded', String(nowExpanded));
+  statusDockSpecsEl.hidden = !nowExpanded;
+  statusDockSpecsToggleEl.textContent = nowExpanded ? 'Hide turbine specs ▴' : 'Show turbine specs ▾';
+  if (nowExpanded && statusDockSpecsEl.dataset.loaded !== 'true') {
+    statusDockSpecsEl.dataset.loaded = 'true';
+    loadTurbineSpecsOnce();
   }
 });
 

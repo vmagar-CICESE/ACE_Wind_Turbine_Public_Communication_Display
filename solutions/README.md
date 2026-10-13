@@ -94,11 +94,13 @@ free to add a screenshot captured that way.
   credits box, that directly answers the single most common public question
   about any wind turbine: *why isn't it moving?* It's built entirely from
   signals already trusted elsewhere (wind speed, rotor speed, power) rather
-  than the turbine controller's own undocumented status codes — which ACE's
-  API does not publish a decoder for — and offers those raw codes separately,
-  clearly labelled as un-decoded, for anyone who wants to look deeper. Best if
-  the priority is turning a stationary turbine from a confusing moment into a
-  teaching moment, without adding anything that isn't verifiably true.
+  than the turbine controller's own undocumented status codes, which ACE's
+  API does not publish a decoder for. A second, opt-in sub-panel shows a
+  short, verified turbine spec sheet (model, serial number, rated power,
+  commissioning date, location) pulled straight from the turbine's own
+  configuration record. Best if the priority is turning a stationary turbine
+  from a confusing moment into a teaching moment, without adding anything
+  that isn't verifiably true.
 
 All eight satisfy the same minimum requirements (live ACE data, screen-ready,
 non-technical audience, open licence with reproduction instructions) — the

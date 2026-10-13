@@ -663,7 +663,7 @@ body {
   color: var(--muted);
 }
 
-.status-dock-raw-toggle {
+.status-dock-specs-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
@@ -679,44 +679,44 @@ body {
   transition: all 0.2s ease;
 }
 
-.status-dock-raw-toggle:hover,
-.status-dock-raw-toggle:focus-visible {
-  background: rgba(255, 200, 87, 0.2);
-  border-color: var(--stale);
+.status-dock-specs-toggle:hover,
+.status-dock-specs-toggle:focus-visible {
+  background: rgba(61, 220, 132, 0.2);
+  border-color: var(--good);
   color: #fff;
 }
 
-.status-dock-raw {
+.status-dock-specs {
   margin-top: 0.6em;
   padding-top: 0.6em;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.status-dock-raw-list {
+.status-dock-specs-list {
   margin: 0 0 0.5em;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 0.25em 0.8em;
+  gap: 0.3em 0.8em;
 }
 
-.status-dock-raw-row {
+.status-dock-specs-row {
   display: contents;
 }
 
-.status-dock-raw-row dt {
+.status-dock-specs-row dt {
   font-size: 0.72rem;
   color: var(--muted);
 }
 
-.status-dock-raw-row dd {
+.status-dock-specs-row dd {
   margin: 0;
   font-size: 0.72rem;
-  font-variant-numeric: tabular-nums;
+  font-weight: 600;
   color: var(--text);
   text-align: right;
 }
 
-.status-dock-raw-note {
+.status-dock-specs-note {
   margin: 0;
   font-size: 0.68rem;
   line-height: 1.4;

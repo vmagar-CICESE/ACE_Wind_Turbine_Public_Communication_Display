@@ -50,25 +50,27 @@ about this specific turbine's certified cut-in/cut-out specification — that
 exact figure isn't published anywhere in ACE's API or public materials that
 could be verified for this build.
 
-A second, explicitly-labelled **"Technical status log"** sub-panel (collapsed
-by default, opt-in) shows the raw `main_status` / `substatus` / fault /
-warning / service values exactly as returned by the API, with the timestamp
-they were logged. It states plainly that ACE does not publish a decoder for
-these codes — shown for transparency, not interpreted.
+A second, collapsed-by-default **"Turbine specs"** sub-panel shows a short
+spec sheet — model, serial number, rated power, commissioning date, and
+location — pulled directly from the turbine's own configuration record on
+the ACE API, not estimated or looked up elsewhere. This replaced an earlier
+version of this panel that showed the raw, undocumented status/fault codes
+instead; those codes turned out to add little value for a public audience
+since they can't be meaningfully interpreted without an official decoder (see
+git history for that earlier iteration if useful as reference).
 
 ### Live ACE data used (new in this concept)
 
 | Data | Endpoint | Refresh | Used for |
 |---|---|---|---|
 | Wind speed, rotor speed, power | Already-polled `.../data/wec_instantaneous/latest` (no new request) | every 1 second | plain-English headline and explanation |
-| Raw status event (`main_status`, `substatus`, fault/warning/service flags) | `.../events/status/latest?limit=1` | once when the "Technical status log" is opened, then every 5 minutes while it stays open and the tab is visible | raw diagnostic log sub-panel |
+| Turbine model, serial number, rated power, commissioning date | `.../configuration/latest` (shared with the cache already used to scale the power meter — no duplicate request) | once, when "Turbine specs" is first opened | specs sub-panel |
+| Site location name | `.../sites/ace/configuration/latest` | once, when "Turbine specs" is first opened | specs sub-panel |
 
-The status-events endpoint isn't a polling "family" with its own
-API-recommended refresh interval, so 5 minutes was chosen deliberately: it's
-a secondary, opt-in diagnostic panel, not something that needs second-by-second
-freshness, and fetching it only while actually open (rather than continuously
-in the background) keeps the page's total request rate well under the
-challenge's one-request-per-second guidance.
+Both configuration endpoints are static metadata that essentially never
+changes, so they're fetched once, lazily, only the first time a visitor
+actually opens the specs panel — not on every refresh and not for visitors
+who never open it.
 
 ### Offline behaviour
 
@@ -142,9 +144,9 @@ The display is architected with a balanced, symmetric layout:
 | 13 additional instantaneous fields (voltage, current, power factor, frequency, etc.) | same request as above | 1s | every 1 second |
 | Air pressure, blade pitch | `.../data/wecstd/latest` | 10m | every 60 seconds |
 | Daily availability | `.../data/wec_availability/latest` | daily | once at load, then hourly |
-| Turbine configuration | `.../configuration/latest` | — | once at load |
+| Turbine configuration (rated capacity; also model/serial/commissioning date for the specs panel) | `.../assets/wec-1/configuration/latest` | — | once at load (specs panel reuses this cached response) |
+| Site location name (new, for specs panel) | `.../sites/ace/configuration/latest` | — | once, when "Turbine specs" is first opened |
 | Signal history chart | `.../data/{family}/range` | 60s / 10m / daily | on demand when selected |
-| Raw turbine status event (new) | `.../events/status/latest?limit=1` | — | once when the status explainer's "Technical status log" is opened, then every 5 minutes while open and visible |
 
 ## How to Run
 

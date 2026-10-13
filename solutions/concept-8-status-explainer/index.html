@@ -112,22 +112,19 @@
             Waiting for a live reading from the turbine…
           </p>
 
-          <button type="button" class="status-dock-raw-toggle" id="status-dock-raw-toggle" aria-expanded="false" aria-controls="status-dock-raw">
-            Show technical status log ▾
+          <button type="button" class="status-dock-specs-toggle" id="status-dock-specs-toggle" aria-expanded="false" aria-controls="status-dock-specs">
+            Show turbine specs ▾
           </button>
-          <div class="status-dock-raw" id="status-dock-raw" hidden>
-            <dl class="status-dock-raw-list" id="status-dock-raw-list">
-              <div class="status-dock-raw-row"><dt>Main status</dt><dd id="raw-main-status">--</dd></div>
-              <div class="status-dock-raw-row"><dt>Sub-status</dt><dd id="raw-substatus">--</dd></div>
-              <div class="status-dock-raw-row"><dt>Fault flag</dt><dd id="raw-fault-flag">--</dd></div>
-              <div class="status-dock-raw-row"><dt>Warning flag</dt><dd id="raw-warning-flag">--</dd></div>
-              <div class="status-dock-raw-row"><dt>Service flag</dt><dd id="raw-service-flag">--</dd></div>
-              <div class="status-dock-raw-row"><dt>Logged</dt><dd id="raw-observed-at">--</dd></div>
+          <div class="status-dock-specs" id="status-dock-specs" hidden>
+            <dl class="status-dock-specs-list" id="status-dock-specs-list">
+              <div class="status-dock-specs-row"><dt>Model</dt><dd id="spec-model">--</dd></div>
+              <div class="status-dock-specs-row"><dt>Serial number</dt><dd id="spec-serial">--</dd></div>
+              <div class="status-dock-specs-row"><dt>Rated power</dt><dd id="spec-power">--</dd></div>
+              <div class="status-dock-specs-row"><dt>In operation since</dt><dd id="spec-commissioned">--</dd></div>
+              <div class="status-dock-specs-row"><dt>Location</dt><dd id="spec-location">--</dd></div>
             </dl>
-            <p class="status-dock-raw-note">
-              These are the turbine controller's own internal codes, shown as-is from the ACE API.
-              ACE does not publish a public decoder for the exact meaning of every code, so we show
-              the numbers for transparency rather than guess what each one means.
+            <p class="status-dock-specs-note">
+              Straight from the turbine's own configuration record on the ACE API — not estimated.
             </p>
           </div>
         </div>
