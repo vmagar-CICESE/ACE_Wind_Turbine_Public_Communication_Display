@@ -112,20 +112,21 @@ body {
 
 .scene-title {
   position: absolute;
-  top: clamp(1rem, 3vw, 2rem);
+  top: clamp(0.75rem, 2vh, 1.5rem);
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  padding: 0.35em 1.1em;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(61, 220, 132, 0.35);
-  border-radius: 999px;
-  font-size: clamp(1.8rem, 3.2vw, 3rem);
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--good);
   text-align: center;
   white-space: nowrap;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8), 0 0 22px rgba(0, 0, 0, 0.6);
   z-index: 1;
 }
 
@@ -432,7 +433,7 @@ body {
 .story-dock {
   position: absolute;
   right: clamp(5.5rem, 7.8vw, 7.5rem);
-  top: clamp(4.5rem, 8vh, 6.5rem);
+  top: clamp(4.2rem, 8.5vh, 6.2rem);
   max-width: min(34ch, 30vw);
   background: rgba(8, 20, 16, 0.72);
   backdrop-filter: blur(12px);
@@ -912,34 +913,6 @@ body {
 .modal-dot.active {
   background: var(--good);
   transform: scale(1.3);
-}
-
-/* =========================================================================
-   RESPONSIVE LAYOUT
-   ========================================================================= */
-@media (max-width: 1024px) {
-  .story-dock {
-    max-width: min(30ch, 32vw);
-    right: clamp(5rem, 8vw, 7rem);
-  }
-}
-
-@media (max-width: 800px) {
-  .scene-title {
-    font-size: 1.1rem;
-  }
-  .overlay {
-    max-width: 90vw;
-    bottom: auto;
-  }
-  .story-dock {
-    position: static;
-    max-width: 90vw;
-    margin: 1rem auto;
-  }
-  .credits-box {
-    max-width: 90vw;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
