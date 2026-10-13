@@ -470,7 +470,9 @@ function handleLiveData(data) {
   yawGroupEl.setAttribute('transform', `translate(${yawOffsetPx.toFixed(1)}, 0)`);
 
   const fraction = Math.max(0, Math.min(1, power / ratedCapacityKw));
-  meterFillEl.style.height = `${fraction * 100}%`;
+  const fillHeight = fraction * 450;
+  meterFillEl.setAttribute('y', (843 - fillHeight).toFixed(1));
+  meterFillEl.setAttribute('height', fillHeight.toFixed(1));
 
   headingValueEl.textContent = `${compassLabel(heading)} (${Math.round(heading)}°)`;
   updateWindVisual(wind);

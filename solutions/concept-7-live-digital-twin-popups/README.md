@@ -52,10 +52,11 @@ The **Story & Impact Dock** on the right-hand side satisfies both modes:
 
 ## Right-hand Side Layout Architecture
 
-The right-hand side is carefully proportioned to prevent overlap:
-- **Power meter:** Placed on the right margin (`right: clamp(1rem, 2.5vw, 2rem)`), tracking active generation vs. 4,245 kW capacity.
-- **Story dock:** Positioned comfortably to the left of the meter (`right: clamp(6.2rem, 9.2vw, 8.4rem); top: clamp(1rem, 2.6vw, 2rem); max-width: min(34ch, 30vw)`). On standard 16:9 displays (1920×1080 and 1280×720), this leaves over 100–290px of clear space between the rotor blades and the dock.
-- **Credits box:** Anchored to the bottom-right corner, below both the meter and the story dock.
+The display is architected with a balanced, symmetric layout:
+- **Turbine Tower as Live Power Gauge:** Rather than an auxiliary vertical bar, the wind turbine tower itself serves as the active generation power gauge, rising from the base to 4,245 kW rated capacity in brand green (`#3ddc84`), with the live numeric kW reading cleanly badged directly beneath the tower foot.
+- **Left-hand Overlay:** Anchored to `left: clamp(1rem, 3vw, 2rem)` and `top: clamp(3rem, 6.5vh, 5rem)`, displaying live connection status, wind speed/direction, and cumulative energy.
+- **Right-hand Story Dock:** Anchored to `right: clamp(1rem, 3vw, 2rem)` and `top: clamp(3rem, 6.5vh, 5rem)`, perfectly mirroring the left overlay to create an uncluttered, horizontally symmetric upper display.
+- **Credits box:** Anchored to the bottom-right corner (`right: clamp(1rem, 3vw, 2rem); bottom: clamp(1.5rem, 3.5vh, 2.75rem)`), aligned with the story dock.
 - **Story modal:** Center-stage overlay with dark frosted backdrop (`backdrop-filter: blur(8px)`), accessible close button (`✕`), keyboard navigation (`Escape`, `Tab`), previous/next topic paging, and indicator dots.
 
 ## Live ACE Data Used
