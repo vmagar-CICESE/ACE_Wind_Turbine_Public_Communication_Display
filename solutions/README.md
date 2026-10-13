@@ -1,6 +1,6 @@
 # Solutions — Challenge 5: ACE Public Communication Display
 
-Seven independent, fully working concepts for the community-centre screen,
+Eight independent, fully working concepts for the community-centre screen,
 each in its own self-contained folder. Every concept uses **live data from
 the real ACE API** (`https://ace-api.duckdns.org`), is a static site with no
 backend/build step, and follows the challenge's required resilience rules
@@ -15,6 +15,7 @@ backend/build step, and follows the challenge's required resilience rules
 | 5 | **ACE Live Wind: Digital Twin (Plus)** | [concept-5-live-digital-twin-plus/](concept-5-live-digital-twin-plus/) | Concept 4, refined: bigger text, a repositioned turbine, and history charts with real labelled axes that match the official ACE dashboard's own "mean" signals | Full-screen digital twin + collapsible data explorer with labelled charts |
 | 6 | **ACE Live Wind: Digital Twin (Branded)** | [concept-6-live-digital-twin-branded/](concept-6-live-digital-twin-branded/) | Concept 4, plus a title and a credits/links box matching the official ACE dashboard's own header | Full-screen digital twin + collapsible data explorer + branded credits panel |
 | 7 | **ACE Live Wind: Digital Twin (Community Pop-ups)** | [concept-7-live-digital-twin-popups/](concept-7-live-digital-twin-popups/) | Concept 6, plus right-hand interactive "Why?" & community impact pop-ups (WHO health link, ALW wealth, turbine scale, grid, clean air) | Full-screen digital twin + collapsible explorer + right-hand pop-up story dock |
+| 8 | **ACE Live Wind: Digital Twin (Status Explainer)** | [concept-8-status-explainer/](concept-8-status-explainer/) | Concept 7, plus a "What's it doing right now?" explainer that answers *why isn't it moving?* in plain English, using only signals already trusted elsewhere | Full-screen digital twin + collapsible explorer + story dock + status explainer |
 
 Each folder has its own README with full details — endpoints used, freshness
 rules, reproduction steps, licence and data credit. This page just compares
@@ -26,7 +27,14 @@ them and explains the shared setup.
 |---|---|---|---|---|---|---|
 | ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) | ![Concept 6 screenshot](concept-6-live-digital-twin-branded/screenshot.png) | ![Concept 7 screenshot](concept-7-live-digital-twin-popups/screenshot.png) |
 
-## How the seven differ
+Concept 8 doesn't have a screenshot here yet — this sandbox's automated
+browser screenshot tool renders its captures at an unreliable, overly small
+size (a tooling quirk, not a bug in the page; verified correct instead via
+direct DOM measurements and simulated data in-browser). Open
+`concept-8-status-explainer/index.html` in a real browser to see it, and feel
+free to add a screenshot captured that way.
+
+## How the eight differ
 
 - **Concept 1** is the most information-dense at a glance: power, wind,
   rotor speed, compass heading, lifetime energy, rated capacity and today's
@@ -81,14 +89,24 @@ them and explains the shared setup.
   SDG 7 / SDG 3 / SDG 1), how ACE's revenue stays in Lawrence Weston to fight
   fuel poverty, how big the turbine is, where the electricity flows, and how
   clean air protects respiratory health in Bristol.
+- **Concept 8** takes Concept 7 and adds a collapsed-by-default **"What's it
+  doing right now?"** explainer, stacked between the Story Dock and the
+  credits box, that directly answers the single most common public question
+  about any wind turbine: *why isn't it moving?* It's built entirely from
+  signals already trusted elsewhere (wind speed, rotor speed, power) rather
+  than the turbine controller's own undocumented status codes — which ACE's
+  API does not publish a decoder for — and offers those raw codes separately,
+  clearly labelled as un-decoded, for anyone who wants to look deeper. Best if
+  the priority is turning a stationary turbine from a confusing moment into a
+  teaching moment, without adding anything that isn't verifiably true.
 
-All seven satisfy the same minimum requirements (live ACE data, screen-ready,
+All eight satisfy the same minimum requirements (live ACE data, screen-ready,
 non-technical audience, open licence with reproduction instructions) — the
 right choice depends on which judging criterion the community wants to lead
-with. They could also be combined (e.g. Concept 3/4/5/6/7 as an ambient "idle"
-state cycling into Concept 2's slides every so often).
+with. They could also be combined (e.g. Concept 3/4/5/6/7/8 as an ambient
+"idle" state cycling into Concept 2's slides every so often).
 
-## Shared setup, common to all seven
+## Shared setup, common to all eight
 
 - **No build step, no dependencies.** Each folder is plain HTML/CSS/JS. Serve
   any one of them with:
@@ -133,7 +151,7 @@ state cycling into Concept 2's slides every so often).
   offline state is shown (verified for all concepts by deliberately blocking the
   API during testing — see each concept's README).
 
-## Data and licensing (applies to all seven)
+## Data and licensing (applies to all eight)
 
 Live and historical turbine data: **ACE Wind Turbine Data**, Plumley,
 Charlie; Garrad, Andrew; Burke, Wilf; Jonsson, Christian; Smirthwaite,

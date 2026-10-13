@@ -1,0 +1,157 @@
+# Concept 8 — ACE Live Wind: Digital Twin, Community Stories & Status Explainer
+
+Everything in [Concept 7](../concept-7-live-digital-twin-popups/) — unchanged:
+the full-screen animated turbine, the live info panel, the 17-signal
+explorer, the centred title banner, the Story & Impact Dock, and the official
+ACE credits box — **plus** a new **"What's it doing right now?" status
+explainer**, placed on the right-hand side between the Story Dock and the
+credits box.
+
+Concept 7 remains completely untouched; this is a separate, additive concept.
+
+## Why a status explainer?
+
+The single most common question a passer-by asks about a wind turbine is
+*"why isn't it moving?"* — usually on a calm day, or occasionally in very
+strong wind. Without an explanation, a stationary turbine can look broken
+even when it's working exactly as designed. The status explainer turns that
+moment of confusion into a short, honest, plain-English teaching moment,
+using live signals the rest of this concept already trusts and displays.
+
+Collapsed by default (so it doesn't compete with the Story Dock above it),
+it shows a one-line headline with a coloured icon; tapping it expands a short
+explanation.
+
+## How the explanation is generated — and what it deliberately avoids
+
+ACE's API exposes a turbine status-event feed (`main_status`, `substatus`,
+`fault_message_flag`, `warning_message_flag`, `service_flag`), but **ACE does
+not publish a decoder for what each numeric code means** (confirmed via
+`/v1/event-families`, which lists only field names, no meanings). Inventing a
+mapping from these undocumented codes to specific claims (e.g. "code 3 means
+a gearbox fault") would be fabricating facts the API doesn't actually provide
+— something the challenge's own contributor guidance explicitly warns
+against.
+
+Instead, the plain-English headline is generated entirely from three signals
+that are already live-polled every second for the rest of this concept (no
+extra request needed): **wind speed**, **rotor speed**, and **power output**.
+
+| Headline | Condition | Icon |
+|---|---|---|
+| Generating electricity | Rotor turning (≥ 1 rpm) and producing power | 🌀 |
+| Resting — not enough wind | Not turning; wind below ~3.5 m/s | 🍃 |
+| Paused — strong-wind safety stop | Not turning; wind above ~20 m/s | ⚠️ |
+| Not generating right now | Not turning; wind in between | ⏸️ |
+
+The ~3.5 m/s and ~20 m/s thresholds are general wind-industry ballpark
+figures used only to choose a sensible explanation, **not** an assertion
+about this specific turbine's certified cut-in/cut-out specification — that
+exact figure isn't published anywhere in ACE's API or public materials that
+could be verified for this build.
+
+A second, explicitly-labelled **"Technical status log"** sub-panel (collapsed
+by default, opt-in) shows the raw `main_status` / `substatus` / fault /
+warning / service values exactly as returned by the API, with the timestamp
+they were logged. It states plainly that ACE does not publish a decoder for
+these codes — shown for transparency, not interpreted.
+
+### Live ACE data used (new in this concept)
+
+| Data | Endpoint | Refresh | Used for |
+|---|---|---|---|
+| Wind speed, rotor speed, power | Already-polled `.../data/wec_instantaneous/latest` (no new request) | every 1 second | plain-English headline and explanation |
+| Raw status event (`main_status`, `substatus`, fault/warning/service flags) | `.../events/status/latest?limit=1` | once when the "Technical status log" is opened, then every 5 minutes while it stays open and the tab is visible | raw diagnostic log sub-panel |
+
+The status-events endpoint isn't a polling "family" with its own
+API-recommended refresh interval, so 5 minutes was chosen deliberately: it's
+a secondary, opt-in diagnostic panel, not something that needs second-by-second
+freshness, and fetching it only while actually open (rather than continuously
+in the background) keeps the page's total request rate well under the
+challenge's one-request-per-second guidance.
+
+### Offline behaviour
+
+If the live feed goes down, the headline keeps showing the last known state
+(consistent with how the rest of this concept behaves) and the panel's
+border switches to the same red "offline" colour used elsewhere, rather than
+guessing or resetting to a blank state. Verified by deliberately blocking the
+ACE API during testing.
+
+## A layout note: one flex column, not three separately-positioned boxes
+
+Adding a third right-hand panel was a good opportunity to fix a latent
+fragility: in Concept 7, the Story Dock and credits box were each
+independently `position: absolute` with hard-coded `top`/`bottom` values. That
+works until any one box's content changes height — at which point two
+independently-positioned boxes can silently start overlapping. In this
+concept, the Story Dock, status explainer, and credits box are instead all
+children of one `.right-rail` flex column (`display: flex; flex-direction:
+column; gap: ...`), anchored top-to-bottom. Flow layout means they can never
+overlap regardless of how long any one panel's content is, with
+`overflow-y: auto` as a safety net on unrealistically short screens. Verified
+directly via `getBoundingClientRect()` at 1920×1080 with both the Story
+Dock's second topic and the full status explainer (including the raw log)
+expanded at once — no overlap, no scrollbar needed.
+
+## The 5 Community Pop-up Topics
+
+### 1. 💡 Why is Clean Energy Important? (Global Health & SDGs)
+- **Primary link:** [World Health Organization (WHO) — Energy and Health](https://www.who.int/health-topics/energy-and-health#tab=tab_1)
+- **Key SDGs:** SDG 7 (Affordable & Clean Energy), SDG 3 (Good Health & Well-being), SDG 1 (No Poverty), SDG 13 (Climate Action)
+- **Core message:** Clean energy is not just about kilowatt-hours or utility bills — it is fundamental healthcare.
+- **Featured WHO quotation:**
+  > "Energy and health are inextricably linked. Access to clean, sustainable and affordable energy, outlined in the seventh Sustainable Development Goal (SDG 7), plays a crucial role in advancing health (SDG 3). Energy is also critical for achieving almost all other global goals that include eradication of poverty (SDG 1), opportunities for quality education (SDG 4), achievement of gender equality (SDG 5), access to clean water (SDG 6), jobs security and economic growth (SDG 8) and combat of climate change (SDG 13).
+  >
+  > The links between energy and health are particularly evident in homes and health-care facilities. Access to clean and sustainable energy in homes is essential to protect people’s health from household air pollution due to the use of polluting stoves and fuels such as coal and biomass. Access to clean and reliable energy in health-care facilities is important to ensure the delivery of essential health care services for disease prevention and treatment."
+- **Local connection:** Connecting the WHO's global insight to Bristol: zero outdoor air pollution from wind generation, warm-home funding via ALW to fight fuel poverty, and dependable power for community health.
+
+### 2. 🏘️ How Does This Help Lawrence Weston? (Community Wealth)
+- **Primary link:** [Ambition Lawrence Weston (ALW)](https://www.ambitionlw.org/)
+- **Key SDGs:** SDG 1 (No Poverty), SDG 8 (Decent Work & Economic Growth), SDG 11 (Sustainable Communities)
+- **Core message:** 100% community-owned — unlike corporate wind farms where profits leave the area, every penny of surplus revenue is reinvested in BS11 to fund emergency fuel support, home insulation grants, youth programmes, and community regeneration.
+
+### 3. 🌬️ How Big Is Our Wind Turbine? (Local Pride & Engineering)
+- **Primary link:** [Ambition Community Energy (ACE) — The Turbine](https://ambitioncommunityenergy.org/the-turbine/)
+- **Key SDGs:** SDG 7 (Clean Energy), SDG 9 (Industry, Innovation & Infrastructure)
+- **Core message:** Standing 150 metres tall to blade tip, the ACE turbine is the tallest onshore wind turbine in England — taller than Bristol Cathedral (65m) and the London Eye (135m). Its 115m rotor diameter sweeps an area wider than a football pitch, generating over 10 million kWh per year.
+
+### 4. ⚡ Where Does the Electricity Actually Go? (The Grid)
+- **Primary link:** [Official Live ACE Dashboard](https://ace-api.duckdns.org/dashboard/)
+- **Key SDGs:** SDG 7 (Clean Energy), SDG 11 (Sustainable Cities), SDG 12 (Responsible Consumption)
+- **Core message:** Tracing the journey of a breeze: mechanical rotation in the nacelle converts to high-voltage electricity, travels down heavy insulated cables inside the 100m steel tower, passes through an on-site transformer, and feeds directly into the local 33kV Western Power Distribution (National Grid) network, powering nearby homes and schools first.
+
+### 5. 🫁 Clean Air and Warm Homes in Bristol (Health & Environment)
+- **Primary link:** [ALW Warmth & Energy Advice](https://www.ambitionlw.org/services/energy-advice/)
+- **Key SDGs:** SDG 3 (Good Health & Well-being), SDG 7 (Clean Energy), SDG 13 (Climate Action)
+- **Core message:** Displacing coal and gas generation prevents toxic nitrogen oxides ($NO_x$) and fine particulate matter ($PM_{2.5}$) from entering local air, while ALW energy advisers help residents solve dampness, insulate drafty homes, and keep heating affordable in winter.
+
+## Right-hand Side Layout Architecture
+
+The display is architected with a balanced, symmetric layout:
+- **Turbine Tower as Live Power Gauge:** Rather than an auxiliary vertical bar, the wind turbine tower itself serves as the active generation power gauge, rising from the base to 4,245 kW rated capacity in brand green (`#3ddc84`), with the live numeric kW reading cleanly badged directly beneath the tower foot.
+- **Left-hand Overlay:** Anchored to `left: clamp(1rem, 3vw, 2rem)` and `top: clamp(3rem, 6.5vh, 5rem)`, displaying live connection status, wind speed/direction, and cumulative energy.
+- **Right-hand rail:** A single flex column anchored to `right: clamp(1rem, 3vw, 2rem)`, spanning from `top: clamp(5.2rem, 10vh, 7rem)` to `bottom: clamp(1.5rem, 3.5vh, 2.75rem)`, containing — in order — the Story Dock, the status explainer, and the credits box. See "A layout note" above for why this is one flex column rather than three independently-positioned boxes.
+- **Story modal:** Center-stage overlay with dark frosted backdrop (`backdrop-filter: blur(8px)`), accessible close button (`✕`), keyboard navigation (`Escape`, `Tab`), previous/next topic paging, and indicator dots.
+
+## Live ACE Data Used
+
+| Data | Endpoint | Resolution | Refresh |
+|---|---|---|---|
+| Core animation fields (power, wind speed, rotor speed, nacelle position, lifetime energy) | `.../data/wec_instantaneous/latest` | 1s | every 1 second |
+| 13 additional instantaneous fields (voltage, current, power factor, frequency, etc.) | same request as above | 1s | every 1 second |
+| Air pressure, blade pitch | `.../data/wecstd/latest` | 10m | every 60 seconds |
+| Daily availability | `.../data/wec_availability/latest` | daily | once at load, then hourly |
+| Turbine configuration | `.../configuration/latest` | — | once at load |
+| Signal history chart | `.../data/{family}/range` | 60s / 10m / daily | on demand when selected |
+| Raw turbine status event (new) | `.../events/status/latest?limit=1` | — | once when the status explainer's "Technical status log" is opened, then every 5 minutes while open and visible |
+
+## How to Run
+
+No build step, no dependencies. Serve with any static web server:
+
+```powershell
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/solutions/concept-8-status-explainer/` in your browser.
