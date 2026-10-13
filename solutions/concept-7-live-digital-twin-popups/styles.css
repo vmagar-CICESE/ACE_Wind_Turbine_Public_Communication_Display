@@ -112,7 +112,7 @@ body {
 
 .scene-title {
   position: absolute;
-  top: clamp(0.75rem, 2vh, 1.5rem);
+  top: clamp(0.75rem, 1.8vh, 1.5rem);
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
@@ -120,7 +120,7 @@ body {
   background: none;
   border: none;
   border-radius: 0;
-  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--good);
@@ -433,7 +433,7 @@ body {
 .story-dock {
   position: absolute;
   right: clamp(5.5rem, 7.8vw, 7.5rem);
-  top: clamp(4.2rem, 8.5vh, 6.2rem);
+  top: clamp(5.2rem, 12vh, 7.4rem);
   max-width: min(34ch, 30vw);
   background: rgba(8, 20, 16, 0.72);
   backdrop-filter: blur(12px);
