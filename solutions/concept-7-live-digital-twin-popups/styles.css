@@ -558,7 +558,7 @@ body {
 .credits-box {
   position: absolute;
   right: clamp(0.75rem, 2vw, 1.5rem);
-  bottom: clamp(0.75rem, 2vw, 1.5rem);
+  bottom: clamp(2rem, 4.5vh, 3.25rem);
   max-width: min(38ch, 55vw);
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(61, 220, 132, 0.4);
@@ -583,6 +583,7 @@ body {
   font-size: 0.92rem;
   font-weight: 700;
   line-height: 1.2;
+  color: var(--good);
 }
 
 .credits-text {
