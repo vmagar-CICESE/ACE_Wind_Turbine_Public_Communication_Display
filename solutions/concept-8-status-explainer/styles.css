@@ -693,7 +693,7 @@ body {
 }
 
 .status-dock-specs-list {
-  margin: 0 0 0.5em;
+  margin: 0;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.3em 0.8em;
@@ -714,13 +714,6 @@ body {
   font-weight: 600;
   color: var(--text);
   text-align: right;
-}
-
-.status-dock-specs-note {
-  margin: 0;
-  font-size: 0.68rem;
-  line-height: 1.4;
-  color: var(--muted);
 }
 
 /* =========================================================================
