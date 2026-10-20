@@ -160,6 +160,30 @@ being ACE's real figure:
   ACE's own published claim of saving "87,600 tonnes of CO2 over its
   lifetime", using a real, live, independently-verifiable public data source.
 
+### "Today's estimated income" (overlay), replacing "today's availability"
+
+The left-hand overlay previously showed "**X**% available today" as its
+second stat, alongside lifetime energy and the ALW mission sentence. It now
+shows "**£X** est. income today" instead — the same illustrative GB
+wholesale-price calculation as the "last hour" ticker (see above), applied
+to the exact metered kWh generated since local midnight (Europe/London)
+rather than the last 60 minutes. This was a direct swap, not an addition, to
+avoid growing the overlay box: a second always-visible stat line next to
+"today's income" risked wrapping onto an extra line depending on the figure
+size, so one was replaced rather than both being kept.
+
+**Nothing is lost** — daily availability is still live-polled and still
+fully available as "Daily availability" in the "Explore more data" panel
+below (unaffected; the same `wec_availability` request that always fed it is
+untouched), just no longer duplicated in the always-visible overlay.
+
+"Local midnight" is computed correctly across the GMT/BST transition using
+the browser's own IANA timezone database (`Intl.DateTimeFormat` with
+`timeZone: 'Europe/London'`), not a hard-coded UTC offset — verified against
+the live API by checking the actual UTC instant it resolves to on the day
+tested (23:00 UTC, i.e. BST midnight) and confirming the API returns a valid
+metered reading at that exact instant.
+
 ### Live ACE data used (new in this concept)
 
 | Data | Endpoint | Refresh | Used for |
@@ -168,8 +192,9 @@ being ACE's real figure:
 | Turbine model, serial number, rated power, commissioning date | `.../configuration/latest` (shared with the cache already used to scale the power meter — no duplicate request) | once, when "Turbine specs" is first opened | specs sub-panel |
 | Site location name | `.../sites/ace/configuration/latest` | once, when "Turbine specs" is first opened | specs sub-panel |
 | Lifetime exported energy, ~60 minutes ago | `.../data/wec_instantaneous/range?resolution=60s&fields=wec_energy_exported` (a single historical point) | every 60 seconds | exact last-hour kWh delta, tower marker, equivalences |
+| Lifetime exported energy, at local midnight | `.../data/wec_instantaneous/range?resolution=60s&fields=wec_energy_exported` (a single historical point) | every 15 minutes | exact "today so far" kWh delta, income-today overlay stat |
 | GB grid carbon intensity | `api.carbonintensity.org.uk/intensity` (National Grid ESO, not an ACE endpoint) | every 5 minutes | CO₂-avoided ticker item |
-| GB wholesale electricity price | `data.elexon.co.uk/bmrs/api/v1/balancing/pricing/market-index` (Elexon, not an ACE endpoint) | every 5 minutes | illustrative £-value ticker item |
+| GB wholesale electricity price | `data.elexon.co.uk/bmrs/api/v1/balancing/pricing/market-index` (Elexon, not an ACE endpoint) | every 5 minutes | illustrative £-value ticker item and income-today overlay stat |
 
 Both configuration endpoints are static metadata that essentially never
 changes, so they're fetched once, lazily, only the first time a visitor

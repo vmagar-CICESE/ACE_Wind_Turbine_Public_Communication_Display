@@ -37,18 +37,33 @@ const WECSTD_STALE_AFTER_MS = 20 * 60 * 1000;
 
 let ratedCapacityKw = 4245;
 
-// --- "Last hour" energy: endpoints & reference data ------------------------
+// --- Cumulative-energy anchors: "last hour" and "today so far" -------------
 // wec_energy_exported is a cumulative lifetime meter (kWh), confirmed live
 // against the API (values only ever rise). So the exact energy generated in
-// the last hour = (reading now) − (reading ~60 minutes ago), fetched once via
-// the documented .../range endpoint — not estimated from average power.
+// any period = (reading now) − (reading at the start of that period), each
+// fetched via the documented .../range endpoint — not estimated from average
+// power. Used both for the rolling "last hour" and for "today so far".
 const HOUR_MS = 60 * 60 * 1000;
-const HOUR_ANCHOR_WINDOW_MS = 90_000; // ±90s search window around the 60-min-ago target
-function buildHourAnchorEndpoint(targetMs) {
-  const start = new Date(targetMs - HOUR_ANCHOR_WINDOW_MS).toISOString();
-  const end = new Date(targetMs + HOUR_ANCHOR_WINDOW_MS).toISOString();
+const ENERGY_ANCHOR_WINDOW_MS = 90_000; // ±90s search window around a target instant
+function buildEnergyAnchorEndpoint(targetMs) {
+  const start = new Date(targetMs - ENERGY_ANCHOR_WINDOW_MS).toISOString();
+  const end = new Date(targetMs + ENERGY_ANCHOR_WINDOW_MS).toISOString();
   return `${API_BASE}/v1/sites/${SITE}/assets/${ASSET}/data/wec_instantaneous/range` +
     `?resolution=60s&fields=wec_energy_exported&start=${start}&end=${end}&page_size=10`;
+}
+
+// Today's start, as a UTC instant — i.e. local midnight in the turbine's own
+// timezone (Europe/London), correctly handling the GMT/BST transition via
+// the browser's built-in IANA timezone database rather than a hard-coded
+// offset. Re-derived from "now" on every call, so it naturally rolls over
+// to the new day once this is next refreshed after midnight.
+function getTodayStartUtcMs(nowMs = Date.now()) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/London', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit',
+  }).formatToParts(nowMs);
+  const get = (type) => Number(parts.find((p) => p.type === type).value);
+  const msSinceLondonMidnight = ((get('hour') % 24 * 60 + get('minute')) * 60 + get('second')) * 1000;
+  return nowMs - msSinceLondonMidnight;
 }
 
 // Live grid carbon intensity (gCO2/kWh), free/keyless public API from
@@ -316,7 +331,7 @@ const rotorGroupEl = document.getElementById('rotor');
 const yawGroupEl = document.getElementById('yaw-group');
 const fallbackMessageEl = document.getElementById('fallback-message');
 const lifetimeEnergyEl = document.getElementById('lifetime-energy');
-const availabilityTodayEl = document.getElementById('availability-today');
+const incomeTodayEl = document.getElementById('income-today');
 
 const explorerToggleEl = document.getElementById('explorer-toggle');
 const explorerPanelEl = document.getElementById('explorer-panel');
@@ -387,6 +402,9 @@ let carbonIntensityGPerKwh = null;
 let wholesalePricePencePerKwh = null;
 let currentHourMessages = ['Waiting for an hour of live data…'];
 let hourMessageIndex = 0;
+
+// "Today so far" income estimate state (overlay info panel)
+let todayStartEnergyKwh = null;
 
 let selectedSignalId = SIGNAL_CATALOG[0].id;
 let chartAbortController = null;
@@ -575,11 +593,34 @@ function updateStatusDockOfflineVisual(isOffline) {
   }
 }
 
-// --- "Last hour" energy: exact metered delta, equivalences & CO2 ----------
+// --- "Last hour" / "today" energy: exact metered deltas, equivalences, CO2, income --
+function findClosestEnergyValue(data, targetMs) {
+  const values = data.series?.wec_energy_exported || [];
+  const timestamps = data.timestamps || [];
+  if (!values.length) return null;
+  let bestIndex = 0;
+  let bestDiffMs = Infinity;
+  timestamps.forEach((tsMicros, index) => {
+    const diffMs = Math.abs(tsMicros / 1000 - targetMs);
+    if (diffMs < bestDiffMs) {
+      bestDiffMs = diffMs;
+      bestIndex = index;
+    }
+  });
+  return Number.isFinite(values[bestIndex]) ? values[bestIndex] : null;
+}
+
 function computeLastHourKwh() {
   const current = coreCache.wec_energy_exported;
   if (!current?.good || !Number.isFinite(hourAgoEnergyKwh)) return null;
   const delta = current.value - hourAgoEnergyKwh;
+  return delta >= 0 ? delta : null;
+}
+
+function computeTodayKwh() {
+  const current = coreCache.wec_energy_exported;
+  if (!current?.good || !Number.isFinite(todayStartEnergyKwh)) return null;
+  const delta = current.value - todayStartEnergyKwh;
   return delta >= 0 ? delta : null;
 }
 
@@ -637,31 +678,41 @@ function updateHourPanel() {
   renderHourMessage();
 }
 
+function updateTodayIncomePanel() {
+  const todayKwh = computeTodayKwh();
+  if (Number.isFinite(todayKwh) && Number.isFinite(wholesalePricePencePerKwh)) {
+    const poundsValue = (todayKwh * wholesalePricePencePerKwh) / 100;
+    incomeTodayEl.textContent = numberFormatter.format(poundsValue);
+  } else {
+    incomeTodayEl.textContent = '--';
+  }
+}
+
 async function refreshHourAgoEnergyAnchor() {
   const targetMs = Date.now() - HOUR_MS;
   try {
-    const response = await fetch(buildHourAnchorEndpoint(targetMs));
+    const response = await fetch(buildEnergyAnchorEndpoint(targetMs));
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    const values = data.series?.wec_energy_exported || [];
-    const timestamps = data.timestamps || [];
-    if (!values.length) throw new Error('No data points returned in the last-hour anchor window');
-
-    // Pick the point closest to exactly 60 minutes ago.
-    let bestIndex = 0;
-    let bestDiffMs = Infinity;
-    timestamps.forEach((tsMicros, index) => {
-      const diffMs = Math.abs(tsMicros / 1000 - targetMs);
-      if (diffMs < bestDiffMs) {
-        bestDiffMs = diffMs;
-        bestIndex = index;
-      }
-    });
-    if (Number.isFinite(values[bestIndex])) {
-      hourAgoEnergyKwh = values[bestIndex];
-    }
+    const value = findClosestEnergyValue(data, targetMs);
+    if (value === null) throw new Error('No data points returned in the last-hour anchor window');
+    hourAgoEnergyKwh = value;
   } catch (error) {
     console.warn('Could not refresh last-hour energy anchor; keeping previous value:', error);
+  }
+}
+
+async function refreshTodayStartEnergyAnchor() {
+  const targetMs = getTodayStartUtcMs();
+  try {
+    const response = await fetch(buildEnergyAnchorEndpoint(targetMs));
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const value = findClosestEnergyValue(data, targetMs);
+    if (value === null) throw new Error('No data points returned in the start-of-day anchor window');
+    todayStartEnergyKwh = value;
+  } catch (error) {
+    console.warn('Could not refresh start-of-day energy anchor; keeping previous value:', error);
   }
 }
 
@@ -824,6 +875,7 @@ function handleLiveData(data) {
   currentRpm = rotorRpm;
   updateStatusDockReading(power, wind, rotorRpm);
   updateHourPanel();
+  updateTodayIncomePanel();
 
   unavailable = false;
   showFreshness();
@@ -924,12 +976,8 @@ async function loadAvailability() {
     if (Number.isFinite(value)) {
       availabilityValue = value;
       availabilityObservedAtMs = Number.isFinite(observed) ? observed / 1000 : Date.now();
-      availabilityTodayEl.textContent = oneDecimalFormatter.format(value);
-    } else {
-      availabilityTodayEl.textContent = '--';
     }
   } catch (error) {
-    availabilityTodayEl.textContent = '--';
     console.warn('Could not load daily availability:', error);
   }
   refreshExplorerLiveValue();
@@ -941,6 +989,8 @@ setInterval(loadAvailability, 60 * 60 * 1000);
 
 refreshHourAgoEnergyAnchor();
 setInterval(refreshHourAgoEnergyAnchor, 60_000);
+refreshTodayStartEnergyAnchor();
+setInterval(refreshTodayStartEnergyAnchor, 15 * 60_000);
 refreshCarbonIntensity();
 setInterval(refreshCarbonIntensity, 5 * 60_000);
 refreshWholesalePrice();
