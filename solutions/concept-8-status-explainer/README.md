@@ -61,13 +61,16 @@ instead; those codes turned out to add little value for a public audience
 since they can't be meaningfully interpreted without an official decoder (see
 git history for that earlier iteration if useful as reference).
 
-The specs panel also adds three **manufacturer-platform reference figures**
-(rotor diameter, swept area, tip height) below the live API fields, visually
-separated and explicitly labelled as coming from Enercon's published E-126/EP3
-platform literature and ACE's own project page rather than the live API —
-deliberately *not* including figures (e.g. certified cut-in/cut-out speed)
-that couldn't be verified for this exact unit, with a pointer to where a
-reader could find a fully verified data sheet instead.
+The specs panel also adds four **manufacturer-verified reference figures**
+(rotor diameter, swept area, hub height, tip height) below the live API
+fields, visually separated and sourced from Enercon's own E-115 data sheet
+and Wikipedia's citation-backed technical write-up for this specific
+turbine, rather than the live API. This also corrects an earlier mistaken
+guess at the model (E-126/EP3) — the installed turbine is an **Enercon
+E-115 EP3**: a 115.7m rotor on a 92m hub, reaching the 150m tip height ACE
+itself advertises (150m is tip height, not hub height — Enercon's own E-115
+data sheet lists 149m as a separate, taller hub-height option for a
+different, lower-wind-class variant, not the one installed here).
 
 ## The tower now shows two things: instantaneous power *and* the last hour
 
