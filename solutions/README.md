@@ -1,6 +1,6 @@
 # Solutions — Challenge 5: ACE Public Communication Display
 
-Eight independent, fully working concepts for the community-centre screen,
+Nine independent, fully working concepts for the community-centre screen,
 each in its own self-contained folder. Every concept uses **live data from
 the real ACE API** (`https://ace-api.duckdns.org`), is a static site with no
 backend/build step, and follows the challenge's required resilience rules
@@ -16,6 +16,7 @@ backend/build step, and follows the challenge's required resilience rules
 | 6 | **ACE Live Wind: Digital Twin (Branded)** | [concept-6-live-digital-twin-branded/](concept-6-live-digital-twin-branded/) | Concept 4, plus a title and a credits/links box matching the official ACE dashboard's own header | Full-screen digital twin + collapsible data explorer + branded credits panel |
 | 7 | **ACE Live Wind: Digital Twin (Community Pop-ups)** | [concept-7-live-digital-twin-popups/](concept-7-live-digital-twin-popups/) | Concept 6, plus right-hand interactive "Why?" & community impact pop-ups (WHO health link, ALW wealth, turbine scale, grid, clean air) | Full-screen digital twin + collapsible explorer + right-hand pop-up story dock |
 | 8 | **ACE Live Wind: Digital Twin (Status Explainer)** | [concept-8-status-explainer/](concept-8-status-explainer/) | Concept 7, plus a "What's it doing right now?" explainer that answers *why isn't it moving?* in plain English, using only signals already trusted elsewhere | Full-screen digital twin + collapsible explorer + story dock + status explainer |
+| 9 | **ACE Live Wind: Digital Twin (Grid Connection)** *(experimental)* | [concept-9-grid-connection/](concept-9-grid-connection/) | Concept 8, plus a decorative substation and power cables between the turbine and the houses, making the "⚡ The Grid" story visible, not just described | Full-screen digital twin + collapsible explorer + story dock + status explainer + illustrated grid connection |
 
 Each folder has its own README with full details — endpoints used, freshness
 rules, reproduction steps, licence and data credit. This page just compares
@@ -27,14 +28,15 @@ them and explains the shared setup.
 |---|---|---|---|---|---|---|
 | ![Concept 1 screenshot](concept-1-turbine-right-now/screenshot.png) | ![Concept 2 screenshot](concept-2-power-for-lawrence-weston/screenshot.png) | ![Concept 3 screenshot](concept-3-live-digital-twin/screenshot.png) | ![Concept 4 screenshot](concept-4-live-digital-twin-extended/screenshot.png) | ![Concept 5 screenshot](concept-5-live-digital-twin-plus/screenshot.png) | ![Concept 6 screenshot](concept-6-live-digital-twin-branded/screenshot.png) | ![Concept 7 screenshot](concept-7-live-digital-twin-popups/screenshot.png) |
 
-Concept 8 doesn't have a screenshot here yet — this sandbox's automated
-browser screenshot tool renders its captures at an unreliable, overly small
-size (a tooling quirk, not a bug in the page; verified correct instead via
-direct DOM measurements and simulated data in-browser). Open
-`concept-8-status-explainer/index.html` in a real browser to see it, and feel
-free to add a screenshot captured that way.
+Concept 8 and Concept 9 don't have a screenshot here yet — this sandbox's
+automated browser screenshot tool renders its captures at an unreliable,
+overly small size (a tooling quirk, not a bug in the page; verified correct
+instead via direct DOM measurements, simulated data, and geometric checks
+in-browser). Open `concept-8-status-explainer/index.html` or
+`concept-9-grid-connection/index.html` in a real browser to see them, and
+feel free to add screenshots captured that way.
 
-## How the eight differ
+## How the nine differ
 
 - **Concept 1** is the most information-dense at a glance: power, wind,
   rotor speed, compass heading, lifetime energy, rated capacity and today's
@@ -101,14 +103,23 @@ free to add a screenshot captured that way.
   configuration record. Best if the priority is turning a stationary turbine
   from a confusing moment into a teaching moment, without adding anything
   that isn't verifiably true.
+- **Concept 9** *(experimental)* takes Concept 8 and adds a small decorative
+  **substation and power cables** between the turbine and the houses, so the
+  Story Dock's existing "⚡ The Grid" topic (power flows into the local grid
+  to homes, schools and shops) has something to actually point at in the
+  illustration. Deliberately not wired to any live signal — there's no API
+  field for "grid connection status" to honestly visualise — it exists only
+  to make an already-true story visually concrete. Kept as its own fork
+  specifically so it can be judged and kept or dropped independently of the
+  already-reviewed Concept 8.
 
-All eight satisfy the same minimum requirements (live ACE data, screen-ready,
+All nine satisfy the same minimum requirements (live ACE data, screen-ready,
 non-technical audience, open licence with reproduction instructions) — the
 right choice depends on which judging criterion the community wants to lead
-with. They could also be combined (e.g. Concept 3/4/5/6/7/8 as an ambient
+with. They could also be combined (e.g. Concept 3/4/5/6/7/8/9 as an ambient
 "idle" state cycling into Concept 2's slides every so often).
 
-## Shared setup, common to all eight
+## Shared setup, common to all nine
 
 - **No build step, no dependencies.** Each folder is plain HTML/CSS/JS. Serve
   any one of them with:
@@ -136,11 +147,22 @@ with. They could also be combined (e.g. Concept 3/4/5/6/7/8 as an ambient
   poller, so the page still makes at most one request per second for its
   live animation.
 
-- **Honest data only.** None of the six concepts invent a "homes powered"
-  or £-value conversion — per the challenge's own guidance, those would be
-  invented community-impact figures ACE has not published. Instead they use
-  real API values (power, energy, availability, operating hours) plus ACE/
-  ALW's own public mission statement. Concepts 4, 5, 6 and 7 go a step further
+- **Honest data only.** None of the nine concepts invent a figure specific
+  to *this turbine* that ACE hasn't actually published or that can't be
+  independently verified — per the challenge's own guidance, that would be
+  fabricating community-impact facts. Concepts 1–7 use only real API values
+  (power, energy, availability, operating hours) plus ACE/ALW's own public
+  mission statement, with no appliance-equivalence or £-value conversions at
+  all. Concepts 8 and 9 go one step further and *do* turn the last hour's
+  exact metered kWh into relatable equivalents (UK homes, kettle boils,
+  PlayStation hours, etc.) and a CO₂-avoided figure — but every conversion
+  factor used is a well-established, cited public reference figure (Ofgem's
+  Typical Domestic Consumption Value, Energy Saving Trust appliance
+  estimates, National Grid ESO's live Carbon Intensity API), clearly
+  distinct from a claim about the turbine itself, and deliberately **not** a
+  £-income figure, since ACE's actual sale price to OVO Energy is
+  commercially confidential and isn't published anywhere (see Concept 8's
+  README for the full reasoning). Concepts 4, 5, 6 and 7 go a step further
   and exclude several wecstd weather fields found to always return a
   constant sentinel value on this turbine (see their READMEs) rather than
   present them as if they were real sensor readings. Concept 5 additionally
@@ -153,7 +175,7 @@ with. They could also be combined (e.g. Concept 3/4/5/6/7/8 as an ambient
   offline state is shown (verified for all concepts by deliberately blocking the
   API during testing — see each concept's README).
 
-## Data and licensing (applies to all eight)
+## Data and licensing (applies to all nine)
 
 Live and historical turbine data: **ACE Wind Turbine Data**, Plumley,
 Charlie; Garrad, Andrew; Burke, Wilf; Jonsson, Christian; Smirthwaite,
