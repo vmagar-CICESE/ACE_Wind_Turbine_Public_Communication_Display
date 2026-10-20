@@ -5,7 +5,9 @@ the full-screen animated turbine, the live info panel, the 17-signal
 explorer, the centred title banner, the Story & Impact Dock, and the official
 ACE credits box — **plus** a new **"What's it doing right now?" status
 explainer**, placed on the right-hand side between the Story Dock and the
-credits box.
+credits box, **and** a "last hour" energy overlay on the turbine tower itself
+(an amber marker plus a floating card with relatable equivalents and CO₂
+avoided — see below).
 
 Concept 7 remains completely untouched; this is a separate, additive concept.
 
@@ -59,6 +61,67 @@ instead; those codes turned out to add little value for a public audience
 since they can't be meaningfully interpreted without an official decoder (see
 git history for that earlier iteration if useful as reference).
 
+The specs panel also adds three **manufacturer-platform reference figures**
+(rotor diameter, swept area, tip height) below the live API fields, visually
+separated and explicitly labelled as coming from Enercon's published E-126/EP3
+platform literature and ACE's own project page rather than the live API —
+deliberately *not* including figures (e.g. certified cut-in/cut-out speed)
+that couldn't be verified for this exact unit, with a pointer to where a
+reader could find a fully verified data sheet instead.
+
+## The tower now shows two things: instantaneous power *and* the last hour
+
+The tower's live fill is an **instantaneous power gauge**: full height =
+4,245 kW rated capacity, current height = `wec_active_power ÷ 4,245 kW`. That
+is genuinely a kW-scaled, fast-moving reading, and deliberately stays that
+way — it is what lets the tower feel "live".
+
+But a single instantaneous kW reading taken on a gusty day can look wildly
+unrepresentative of what the turbine is actually delivering. So a second,
+amber, dashed marker line is now drawn on the tower showing **the average
+output over the last hour**, and a floating card beside the tower spells out
+the exact kWh. Both share the tower's own 0–4,245 kW scale without changing
+its meaning, because of one bit of unit arithmetic: kWh generated over
+exactly one hour is numerically identical to an *average* kW over that hour
+(`kWh ÷ 1h = kW`). So the last hour's kWh is converted back into an implied
+average kW and plotted on the same axis as the live fill — the dashed line
+stays visible even when the live (brighter) fill currently covers that height,
+so you can always compare "right now" against "the last hour" in one glance.
+
+**The last-hour kWh itself is exact, not estimated.** `wec_energy_exported`
+is a cumulative lifetime meter (confirmed live against the API: it only ever
+rises), so `(reading now) − (reading ~60 minutes ago)` is the turbine's own
+metered output for that hour — fetched once a minute via the documented
+`.../data/wec_instantaneous/range` endpoint, not approximated from average
+instantaneous power.
+
+### Making an abstract kWh figure relatable
+
+Beside the kWh figure, a small ticker cycles through a few everyday
+equivalents computed from that same exact last-hour kWh: UK homes' typical
+hourly electricity use, kettle boils, hours of PlayStation gameplay, phone
+charges, and LED-bulb hours. These conversion factors are well-established
+public reference figures (Ofgem's Typical Domestic Consumption Value for
+homes; Energy Saving Trust/manufacturer-typical draws for the appliances) —
+**not** specific to this turbine or independently re-verified for this
+project, used only to make the number relatable, consistent with this
+concept's policy of not inventing unverifiable turbine-specific facts (see
+`APPLIANCE_EQUIVALENTS` in `app.js` for the exact factors and sources).
+
+### Why there's no £ income figure
+
+ACE sells its output to OVO Energy under what is almost certainly a
+commercial, confidential power purchase agreement — the actual sale price
+isn't published anywhere in ACE's API or public materials, so turning the
+last hour's kWh into a real £ income figure isn't possible without
+fabricating a number. Instead, the ticker's final item is **CO₂ avoided**:
+last-hour kWh × the GB grid's live carbon intensity (gCO₂/kWh), fetched from
+National Grid ESO's free, public [Carbon Intensity
+API](https://carbonintensity.org.uk/). This ties directly into ACE's own
+published claim of saving "87,600 tonnes of CO2 over its lifetime", using a
+real, live, independently-verifiable public data source rather than a guessed
+retail or wholesale electricity price.
+
 ### Live ACE data used (new in this concept)
 
 | Data | Endpoint | Refresh | Used for |
@@ -66,6 +129,8 @@ git history for that earlier iteration if useful as reference).
 | Wind speed, rotor speed, power | Already-polled `.../data/wec_instantaneous/latest` (no new request) | every 1 second | plain-English headline and explanation |
 | Turbine model, serial number, rated power, commissioning date | `.../configuration/latest` (shared with the cache already used to scale the power meter — no duplicate request) | once, when "Turbine specs" is first opened | specs sub-panel |
 | Site location name | `.../sites/ace/configuration/latest` | once, when "Turbine specs" is first opened | specs sub-panel |
+| Lifetime exported energy, ~60 minutes ago | `.../data/wec_instantaneous/range?resolution=60s&fields=wec_energy_exported` (a single historical point) | every 60 seconds | exact last-hour kWh delta, tower marker, equivalences |
+| GB grid carbon intensity | `api.carbonintensity.org.uk/intensity` (National Grid ESO, not an ACE endpoint) | every 5 minutes | CO₂-avoided ticker item |
 
 Both configuration endpoints are static metadata that essentially never
 changes, so they're fetched once, lazily, only the first time a visitor

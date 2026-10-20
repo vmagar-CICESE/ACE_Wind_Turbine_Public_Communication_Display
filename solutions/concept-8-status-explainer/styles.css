@@ -132,6 +132,59 @@ body {
   letter-spacing: 0.01em;
 }
 
+/* "Last hour" average-output band & marker on the tower. Fills from the same
+   base as the live power fill, on the same 0–4.2 MW scale (see
+   updateHourPanel() in app.js), so it reads as a distinct section of the
+   tower rather than a separate chart. */
+.tower-hour-avg-fill {
+  fill: url(#hour-avg-pattern);
+}
+
+.hour-avg-marker-line {
+  stroke: var(--stale);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.hour-avg-marker-arrow {
+  fill: var(--stale);
+}
+
+/* "Last hour" floating energy card beside the tower */
+.tower-hour-card {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.65));
+}
+
+.tower-hour-card-bg {
+  fill: rgba(8, 20, 16, 0.88);
+  stroke: rgba(255, 200, 87, 0.5);
+  stroke-width: 1.5;
+}
+
+.tower-hour-card-label {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  fill: var(--stale);
+}
+
+.tower-hour-card-num {
+  font-weight: 800;
+  font-size: 19px;
+  fill: var(--text);
+}
+
+.tower-hour-card-unit {
+  font-size: 13px;
+  fill: var(--muted);
+}
+
+.tower-hour-card-ticker {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
 .nacelle {
   fill: #f4fbf8;
 }
@@ -714,6 +767,21 @@ body {
   font-weight: 600;
   color: var(--text);
   text-align: right;
+}
+
+.status-dock-specs-list--reference {
+  margin-top: 0.5em;
+}
+
+.status-dock-specs-note {
+  margin: 0.6em 0 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.status-dock-specs-note a {
+  color: var(--stale);
 }
 
 /* =========================================================================

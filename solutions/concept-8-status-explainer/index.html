@@ -22,6 +22,12 @@
         <clipPath id="tower-clip">
           <rect x="790" y="393" width="20" height="450" rx="6" />
         </clipPath>
+        <!-- Diagonal hatch used for the "last hour" average-output band, so it
+             reads as a distinct section of the tower from the live power fill. -->
+        <pattern id="hour-avg-pattern" width="8" height="8" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="rgba(255, 200, 87, 0.16)" />
+          <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(255, 200, 87, 0.6)" stroke-width="2" />
+        </pattern>
       </defs>
 
       <path class="hill" d="M0,900 L0,800 Q420,705 800,758 T1600,735 L1600,900 Z" />
@@ -38,12 +44,24 @@
       <g class="tower-gauge" id="tower-gauge" aria-label="Turbine tower active power generation gauge">
         <!-- Tower track background (4.2 MW capacity) -->
         <rect x="790" y="393" width="20" height="450" rx="6" class="tower-track" />
-        <!-- Live active power fill (rises from base up to 4.2 MW capacity) -->
+        <!-- Last-hour average-output band (hatched) and live active power fill
+             (solid), both rising from the base against the same 0–4.2 MW scale
+             as the tower itself. Last-hour kWh is converted to an equivalent
+             average kW (kWh ÷ 1h) so it can share this scale — see
+             updateHourPanel() in app.js. -->
         <g clip-path="url(#tower-clip)">
+          <rect id="hour-avg-fill" x="790" y="843" width="20" height="0" class="tower-hour-avg-fill" />
           <rect id="meter-fill" x="790" y="843" width="20" height="0" class="tower-fill" />
         </g>
         <!-- Tower outer border -->
         <rect x="790" y="393" width="20" height="450" rx="6" class="tower-outline" />
+
+        <!-- Always-visible marker for the last-hour average level, so it stays
+             readable even when the live fill currently covers that height. -->
+        <g id="hour-avg-marker" class="hour-avg-marker" aria-hidden="true">
+          <line id="hour-avg-marker-line" x1="783" y1="843" x2="815" y2="843" class="hour-avg-marker-line" />
+          <polygon id="hour-avg-marker-arrow" points="815,843 823,839 823,847" class="hour-avg-marker-arrow" />
+        </g>
 
         <!-- Live active power badge directly under the tower -->
         <g class="tower-power-badge" transform="translate(800, 865)">
@@ -52,6 +70,20 @@
             <tspan id="power-value" class="tower-power-val">--</tspan>
             <tspan class="tower-power-unit"> kW</tspan>
           </text>
+        </g>
+
+        <!-- "Last hour" energy card: floats beside the tower. The dashed
+             marker line above shows where this sits on the tower's own
+             0–4.2 MW scale; this card spells out the exact kWh plus a few
+             relatable equivalences (see buildHourMessages() in app.js). -->
+        <g class="tower-hour-card" transform="translate(828, 500)" aria-label="Electricity generated in the last hour">
+          <rect x="0" y="0" width="225" height="92" rx="14" class="tower-hour-card-bg" />
+          <text x="16" y="24" class="tower-hour-card-label">⏱️ LAST HOUR</text>
+          <text x="16" y="52" class="tower-hour-card-value">
+            <tspan id="hour-energy-value" class="tower-hour-card-num">--</tspan>
+            <tspan class="tower-hour-card-unit"> kWh generated</tspan>
+          </text>
+          <text x="16" y="76" class="tower-hour-card-ticker" id="hour-ticker-text">Waiting for an hour of live data…</text>
         </g>
       </g>
       <g id="yaw-group">
@@ -123,6 +155,31 @@
               <div class="status-dock-specs-row"><dt>In operation since</dt><dd id="spec-commissioned">--</dd></div>
               <div class="status-dock-specs-row"><dt>Location</dt><dd id="spec-location">--</dd></div>
             </dl>
+
+            <p class="status-dock-specs-note">
+              The fields above come live from ACE's own turbine configuration
+              record. The turbine's control system reports itself as model
+              <strong>"EP3-CS02"</strong> — Enercon's platform/software
+              designation, not a marketing model name.
+            </p>
+            <dl class="status-dock-specs-list status-dock-specs-list--reference">
+              <div class="status-dock-specs-row"><dt>Rotor diameter</dt><dd>127 m</dd></div>
+              <div class="status-dock-specs-row"><dt>Swept area</dt><dd>≈ 12,668 m²</dd></div>
+              <div class="status-dock-specs-row"><dt>Tip height</dt><dd>150 m</dd></div>
+            </dl>
+            <p class="status-dock-specs-note">
+              These three figures are Enercon's published platform
+              specifications for the E-126/EP3 turbine family (rotor diameter
+              is standardised across all EP3/EP4/EP8 power variants) and
+              ACE's own stated tip height — not values from the live API, and
+              not independently certified for this exact unit. For a fully
+              verified technical data sheet (cut-in/cut-out speed, hub height,
+              noise, etc.), see
+              <a href="https://ambitioncommunityenergy.org/the-project/" target="_blank" rel="noopener">ACE's own project page ↗</a>,
+              Enercon's current E-126/EP3 product literature, or the technical
+              appendices of the original Lawrence Weston planning application
+              on Bristol City Council's planning portal.
+            </p>
           </div>
         </div>
       </aside>

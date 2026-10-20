@@ -37,6 +37,45 @@ const WECSTD_STALE_AFTER_MS = 20 * 60 * 1000;
 
 let ratedCapacityKw = 4245;
 
+// --- "Last hour" energy: endpoints & reference data ------------------------
+// wec_energy_exported is a cumulative lifetime meter (kWh), confirmed live
+// against the API (values only ever rise). So the exact energy generated in
+// the last hour = (reading now) − (reading ~60 minutes ago), fetched once via
+// the documented .../range endpoint — not estimated from average power.
+const HOUR_MS = 60 * 60 * 1000;
+const HOUR_ANCHOR_WINDOW_MS = 90_000; // ±90s search window around the 60-min-ago target
+function buildHourAnchorEndpoint(targetMs) {
+  const start = new Date(targetMs - HOUR_ANCHOR_WINDOW_MS).toISOString();
+  const end = new Date(targetMs + HOUR_ANCHOR_WINDOW_MS).toISOString();
+  return `${API_BASE}/v1/sites/${SITE}/assets/${ASSET}/data/wec_instantaneous/range` +
+    `?resolution=60s&fields=wec_energy_exported&start=${start}&end=${end}&page_size=10`;
+}
+
+// Live grid carbon intensity (gCO2/kWh), free/keyless public API from
+// National Grid ESO — used to turn the last hour's kWh into an honest "CO2
+// avoided" figure without guessing ACE's confidential sale price to OVO
+// Energy (that commercial figure isn't published anywhere, so it can't be
+// turned into a real "income" stat without fabricating a number).
+const CARBON_INTENSITY_ENDPOINT = 'https://api.carbonintensity.org.uk/intensity';
+
+// All factors below are well-established public reference figures (not
+// specific to this turbine), used only to make an abstract kWh figure
+// relatable — consistent with this concept's policy of not inventing
+// unverifiable numbers (see README).
+const OFGEM_TYPICAL_HOUSEHOLD_KWH_PER_YEAR = 2700; // Ofgem Typical Domestic Consumption Value (electricity, medium-use profile)
+const APPLIANCE_EQUIVALENTS = [
+  { icon: '🏠', kwhEach: OFGEM_TYPICAL_HOUSEHOLD_KWH_PER_YEAR / (365 * 24),
+    label: (n) => `${compactNumber(n)} UK home${n === 1 ? '' : 's'}' electricity for an hour` },
+  { icon: '☕', kwhEach: 0.11, // Energy Saving Trust: ~0.11 kWh to boil a typical full kettle
+    label: (n) => `${compactNumber(n)} kettle boil${n === 1 ? '' : 's'}` },
+  { icon: '🎮', kwhEach: 0.2, // typical PS5 gameplay draw ~200W
+    label: (n) => `${compactNumber(n)} hour${n === 1 ? '' : 's'} of PlayStation gameplay` },
+  { icon: '📱', kwhEach: 0.012, // typical smartphone charge ~12 Wh
+    label: (n) => `${compactNumber(n)} phone charge${n === 1 ? '' : 's'}` },
+  { icon: '💡', kwhEach: 0.01, // typical 9-10W LED bulb
+    label: (n) => `${compactNumber(n)} hour${n === 1 ? '' : 's'} of an LED bulb` },
+];
+
 // --- Signal catalogue for the "Explore more data" panel -------------------
 const SIGNAL_CATALOG = [
   { id: 'wind_speed', group: 'Wind & weather', label: 'Wind speed', unit: 'm/s', decimals: 1,
@@ -307,6 +346,13 @@ const specPowerEl = document.getElementById('spec-power');
 const specCommissionedEl = document.getElementById('spec-commissioned');
 const specLocationEl = document.getElementById('spec-location');
 
+// "Last hour" energy card & tower overlay DOM references
+const hourAvgFillEl = document.getElementById('hour-avg-fill');
+const hourAvgMarkerLineEl = document.getElementById('hour-avg-marker-line');
+const hourAvgMarkerArrowEl = document.getElementById('hour-avg-marker-arrow');
+const hourEnergyValueEl = document.getElementById('hour-energy-value');
+const hourTickerTextEl = document.getElementById('hour-ticker-text');
+
 // --- State ---------------------------------------------------------------
 let lastGoodObservedAtMs = null;
 let unavailable = false;
@@ -316,6 +362,12 @@ const coreCache = {};
 const wecstdCache = {};
 let availabilityValue = null;
 let availabilityObservedAtMs = null;
+
+// "Last hour" energy state
+let hourAgoEnergyKwh = null;
+let carbonIntensityGPerKwh = null;
+let currentHourMessages = ['Waiting for an hour of live data…'];
+let hourMessageIndex = 0;
 
 let selectedSignalId = SIGNAL_CATALOG[0].id;
 let chartAbortController = null;
@@ -332,6 +384,14 @@ let wecConfigChangesCache = null;
 
 const numberFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 });
 const oneDecimalFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
+const compactFormatter = new Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 });
+
+// Appliance-equivalence counts can run into the tens of thousands (e.g. LED
+// bulb-hours); compact notation (e.g. "12K") keeps the "last hour" ticker
+// readable on a public kiosk display instead of overflowing its card.
+function compactNumber(value) {
+  return value >= 10_000 ? compactFormatter.format(value) : numberFormatter.format(value);
+}
 
 function compassLabel(deg) {
   if (!Number.isFinite(deg)) return '--';
@@ -496,6 +556,107 @@ function updateStatusDockOfflineVisual(isOffline) {
   }
 }
 
+// --- "Last hour" energy: exact metered delta, equivalences & CO2 ----------
+function computeLastHourKwh() {
+  const current = coreCache.wec_energy_exported;
+  if (!current?.good || !Number.isFinite(hourAgoEnergyKwh)) return null;
+  const delta = current.value - hourAgoEnergyKwh;
+  return delta >= 0 ? delta : null;
+}
+
+function buildHourMessages(lastHourKwh) {
+  if (!Number.isFinite(lastHourKwh) || lastHourKwh <= 0) {
+    return ['Waiting for an hour of live data…'];
+  }
+  const messages = APPLIANCE_EQUIVALENTS.map(({ icon, kwhEach, label }) => {
+    const count = Math.max(1, Math.round(lastHourKwh / kwhEach));
+    return `${icon} ${label(count)}`;
+  });
+  if (Number.isFinite(carbonIntensityGPerKwh)) {
+    const kgCo2 = (lastHourKwh * carbonIntensityGPerKwh) / 1000;
+    messages.push(`🌍 ≈ ${numberFormatter.format(kgCo2)} kg CO₂ avoided vs the UK grid average right now`);
+  }
+  return messages;
+}
+
+function renderHourMessage() {
+  if (!currentHourMessages.length) return;
+  hourTickerTextEl.textContent = currentHourMessages[hourMessageIndex % currentHourMessages.length];
+}
+
+setInterval(() => {
+  hourMessageIndex += 1;
+  renderHourMessage();
+}, 6_000);
+
+function updateHourPanel() {
+  const lastHourKwh = computeLastHourKwh();
+
+  if (Number.isFinite(lastHourKwh)) {
+    hourEnergyValueEl.textContent = numberFormatter.format(lastHourKwh);
+    // kWh generated over exactly one hour is numerically the same as an
+    // average kW over that hour, so it shares the tower's 0–4.2 MW kW scale.
+    const hourAvgFraction = Math.max(0, Math.min(1, lastHourKwh / ratedCapacityKw));
+    const hourAvgY = 843 - hourAvgFraction * 450;
+    hourAvgFillEl.setAttribute('y', hourAvgY.toFixed(1));
+    hourAvgFillEl.setAttribute('height', (hourAvgFraction * 450).toFixed(1));
+    hourAvgMarkerLineEl.setAttribute('y1', hourAvgY.toFixed(1));
+    hourAvgMarkerLineEl.setAttribute('y2', hourAvgY.toFixed(1));
+    hourAvgMarkerArrowEl.setAttribute(
+      'points',
+      `815,${hourAvgY.toFixed(1)} 823,${(hourAvgY - 4).toFixed(1)} 823,${(hourAvgY + 4).toFixed(1)}`,
+    );
+  } else {
+    hourEnergyValueEl.textContent = '--';
+  }
+
+  currentHourMessages = buildHourMessages(lastHourKwh);
+  renderHourMessage();
+}
+
+async function refreshHourAgoEnergyAnchor() {
+  const targetMs = Date.now() - HOUR_MS;
+  try {
+    const response = await fetch(buildHourAnchorEndpoint(targetMs));
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const values = data.series?.wec_energy_exported || [];
+    const timestamps = data.timestamps || [];
+    if (!values.length) throw new Error('No data points returned in the last-hour anchor window');
+
+    // Pick the point closest to exactly 60 minutes ago.
+    let bestIndex = 0;
+    let bestDiffMs = Infinity;
+    timestamps.forEach((tsMicros, index) => {
+      const diffMs = Math.abs(tsMicros / 1000 - targetMs);
+      if (diffMs < bestDiffMs) {
+        bestDiffMs = diffMs;
+        bestIndex = index;
+      }
+    });
+    if (Number.isFinite(values[bestIndex])) {
+      hourAgoEnergyKwh = values[bestIndex];
+    }
+  } catch (error) {
+    console.warn('Could not refresh last-hour energy anchor; keeping previous value:', error);
+  }
+}
+
+async function refreshCarbonIntensity() {
+  try {
+    const response = await fetch(CARBON_INTENSITY_ENDPOINT);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const intensity = data.data?.[0]?.intensity;
+    const value = intensity?.actual ?? intensity?.forecast;
+    if (Number.isFinite(value)) {
+      carbonIntensityGPerKwh = value;
+    }
+  } catch (error) {
+    console.warn('Could not refresh live grid carbon intensity (National Grid ESO); keeping previous value:', error);
+  }
+}
+
 async function loadTurbineSpecsOnce() {
   try {
     const [wecResponse, siteResponse] = await Promise.all([
@@ -618,6 +779,7 @@ function handleLiveData(data) {
   updateWindVisual(wind);
   currentRpm = rotorRpm;
   updateStatusDockReading(power, wind, rotorRpm);
+  updateHourPanel();
 
   unavailable = false;
   showFreshness();
@@ -732,6 +894,11 @@ async function loadAvailability() {
 loadStaticConfiguration();
 loadAvailability();
 setInterval(loadAvailability, 60 * 60 * 1000);
+
+refreshHourAgoEnergyAnchor();
+setInterval(refreshHourAgoEnergyAnchor, 60_000);
+refreshCarbonIntensity();
+setInterval(refreshCarbonIntensity, 5 * 60_000);
 
 // --- "Explore more data" panel ---------------------------------------------
 function populateSignalSelect() {
