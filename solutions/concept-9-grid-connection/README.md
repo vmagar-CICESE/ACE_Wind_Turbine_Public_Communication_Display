@@ -134,19 +134,31 @@ project, used only to make the number relatable, consistent with this
 concept's policy of not inventing unverifiable turbine-specific facts (see
 `APPLIANCE_EQUIVALENTS` in `app.js` for the exact factors and sources).
 
-### Why there's no £ income figure
+### Why there's no £ *income* figure (only an illustrative £ estimate)
 
 ACE sells its output to OVO Energy under what is almost certainly a
 commercial, confidential power purchase agreement — the actual sale price
-isn't published anywhere in ACE's API or public materials, so turning the
-last hour's kWh into a real £ income figure isn't possible without
-fabricating a number. Instead, the ticker's final item is **CO₂ avoided**:
-last-hour kWh × the GB grid's live carbon intensity (gCO₂/kWh), fetched from
-National Grid ESO's free, public [Carbon Intensity
-API](https://carbonintensity.org.uk/). This ties directly into ACE's own
-published claim of saving "87,600 tonnes of CO2 over its lifetime", using a
-real, live, independently-verifiable public data source rather than a guessed
-retail or wholesale electricity price.
+isn't published anywhere in ACE's API or public materials, so there's no way
+to show ACE's *real* income without fabricating a number. Instead, the
+ticker includes two honestly-sourced proxies, each clearly labelled as not
+being ACE's real figure:
+
+- **An illustrative £ value**, using the GB wholesale electricity "Market
+  Index Price" (£/MWh, half-hourly) from
+  [Elexon's Balancing Mechanism Reporting Service](https://bmrs.elexon.co.uk/) —
+  the free, public, official reference price generators are actually settled
+  against in the GB market. This is a deliberately different choice from a
+  retail/domestic tariff (e.g. Ofgem's price cap): ACE sells as a generator,
+  not a consumer, so the wholesale price is a much closer (if still
+  illustrative) proxy for what this turbine's output might be worth than a
+  household electricity bill rate would be. Labelled "not ACE's real income"
+  since its actual OVO Energy contract price is still unpublished and may
+  differ from the open wholesale market.
+- **CO₂ avoided**: last-hour kWh × the GB grid's live carbon intensity
+  (gCO₂/kWh), fetched from National Grid ESO's free, public [Carbon
+  Intensity API](https://carbonintensity.org.uk/). This ties directly into
+  ACE's own published claim of saving "87,600 tonnes of CO2 over its
+  lifetime", using a real, live, independently-verifiable public data source.
 
 ### Live ACE data used (new in this concept)
 
@@ -157,6 +169,7 @@ retail or wholesale electricity price.
 | Site location name | `.../sites/ace/configuration/latest` | once, when "Turbine specs" is first opened | specs sub-panel |
 | Lifetime exported energy, ~60 minutes ago | `.../data/wec_instantaneous/range?resolution=60s&fields=wec_energy_exported` (a single historical point) | every 60 seconds | exact last-hour kWh delta, tower marker, equivalences |
 | GB grid carbon intensity | `api.carbonintensity.org.uk/intensity` (National Grid ESO, not an ACE endpoint) | every 5 minutes | CO₂-avoided ticker item |
+| GB wholesale electricity price | `data.elexon.co.uk/bmrs/api/v1/balancing/pricing/market-index` (Elexon, not an ACE endpoint) | every 5 minutes | illustrative £-value ticker item |
 
 Both configuration endpoints are static metadata that essentially never
 changes, so they're fetched once, lazily, only the first time a visitor

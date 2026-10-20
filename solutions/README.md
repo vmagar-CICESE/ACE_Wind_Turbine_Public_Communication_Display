@@ -155,12 +155,14 @@ with. They could also be combined (e.g. Concept 3/4/5/6/7/8/9 as an ambient
   mission statement, with no appliance-equivalence or £-value conversions at
   all. Concepts 8 and 9 go one step further and *do* turn the last hour's
   exact metered kWh into relatable equivalents (UK homes, kettle boils,
-  PlayStation hours, etc.) and a CO₂-avoided figure — but every conversion
-  factor used is a well-established, cited public reference figure (Ofgem's
-  Typical Domestic Consumption Value, Energy Saving Trust appliance
-  estimates, National Grid ESO's live Carbon Intensity API), clearly
-  distinct from a claim about the turbine itself, and deliberately **not** a
-  £-income figure, since ACE's actual sale price to OVO Energy is
+  PlayStation hours, etc.), a CO₂-avoided figure, and an illustrative £
+  value — but every conversion factor used is a well-established, cited
+  public reference figure (Ofgem's Typical Domestic Consumption Value,
+  Energy Saving Trust appliance estimates, National Grid ESO's live Carbon
+  Intensity API, Elexon's live GB wholesale Market Index Price), clearly
+  distinct from a claim about the turbine itself. In particular, the £
+  figure is explicitly labelled as an illustrative wholesale-market estimate,
+  **not** ACE's real income, since ACE's actual sale price to OVO Energy is
   commercially confidential and isn't published anywhere (see Concept 8's
   README for the full reasoning). Concepts 4, 5, 6 and 7 go a step further
   and exclude several wecstd weather fields found to always return a

@@ -58,6 +58,24 @@ function buildHourAnchorEndpoint(targetMs) {
 // turned into a real "income" stat without fabricating a number).
 const CARBON_INTENSITY_ENDPOINT = 'https://api.carbonintensity.org.uk/intensity';
 
+// GB wholesale electricity "Market Index Price" (£/MWh, half-hourly), free/
+// keyless public API from Elexon — the official body running Great
+// Britain's Balancing Mechanism Reporting Service. This is the actual
+// wholesale market reference price generators are settled against, NOT a
+// retail/domestic tariff — a much closer (if still illustrative) proxy for
+// what this turbine's output might be worth than a household electricity
+// price would be, since ACE sells as a generator, not a consumer. ACE's
+// actual contracted price with OVO Energy remains confidential and isn't
+// published anywhere, so this is clearly labelled as an illustrative market
+// reference, not ACE's real income.
+const WHOLESALE_PRICE_WINDOW_MS = 3 * 60 * 60 * 1000; // look back 3h to tolerate reporting lag
+function buildWholesalePriceEndpoint() {
+  const end = new Date();
+  const start = new Date(end.getTime() - WHOLESALE_PRICE_WINDOW_MS);
+  return 'https://data.elexon.co.uk/bmrs/api/v1/balancing/pricing/market-index' +
+    `?from=${start.toISOString()}&to=${end.toISOString()}`;
+}
+
 // All factors below are well-established public reference figures (not
 // specific to this turbine), used only to make an abstract kWh figure
 // relatable — consistent with this concept's policy of not inventing
@@ -366,6 +384,7 @@ let availabilityObservedAtMs = null;
 // "Last hour" energy state
 let hourAgoEnergyKwh = null;
 let carbonIntensityGPerKwh = null;
+let wholesalePricePencePerKwh = null;
 let currentHourMessages = ['Waiting for an hour of live data…'];
 let hourMessageIndex = 0;
 
@@ -572,6 +591,10 @@ function buildHourMessages(lastHourKwh) {
     const count = Math.max(1, Math.round(lastHourKwh / kwhEach));
     return `${icon} ${label(count)}`;
   });
+  if (Number.isFinite(wholesalePricePencePerKwh)) {
+    const poundsValue = (lastHourKwh * wholesalePricePencePerKwh) / 100;
+    messages.push(`💷 ≈ £${numberFormatter.format(poundsValue)} at today's GB wholesale price (not ACE's real income)`);
+  }
   if (Number.isFinite(carbonIntensityGPerKwh)) {
     const kgCo2 = (lastHourKwh * carbonIntensityGPerKwh) / 1000;
     messages.push(`🌍 ≈ ${numberFormatter.format(kgCo2)} kg CO₂ avoided vs the UK grid average right now`);
@@ -654,6 +677,27 @@ async function refreshCarbonIntensity() {
     }
   } catch (error) {
     console.warn('Could not refresh live grid carbon intensity (National Grid ESO); keeping previous value:', error);
+  }
+}
+
+async function refreshWholesalePrice() {
+  try {
+    const response = await fetch(buildWholesalePriceEndpoint());
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    const rows = data.data || [];
+    // Rows alternate between two power exchanges (APXMIDP, N2EXMIDP) per
+    // half-hour, newest first; use the most recent one that actually had
+    // trading volume (a provider can report a zero/no-trade period).
+    const latest =
+      rows.find((row) => row.dataProvider === 'APXMIDP' && Number.isFinite(row.price) && row.volume > 0) ||
+      rows.find((row) => Number.isFinite(row.price) && row.volume > 0);
+    if (latest) {
+      // £/MWh -> pence/kWh: (£/MWh ÷ 1000 kWh per MWh) x 100 pence per £ = £/MWh ÷ 10.
+      wholesalePricePencePerKwh = latest.price / 10;
+    }
+  } catch (error) {
+    console.warn('Could not refresh live GB wholesale electricity price (Elexon); keeping previous value:', error);
   }
 }
 
@@ -899,6 +943,8 @@ refreshHourAgoEnergyAnchor();
 setInterval(refreshHourAgoEnergyAnchor, 60_000);
 refreshCarbonIntensity();
 setInterval(refreshCarbonIntensity, 5 * 60_000);
+refreshWholesalePrice();
+setInterval(refreshWholesalePrice, 5 * 60_000);
 
 // --- "Explore more data" panel ---------------------------------------------
 function populateSignalSelect() {
