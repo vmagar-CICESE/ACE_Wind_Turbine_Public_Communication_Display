@@ -72,18 +72,26 @@
           </text>
         </g>
 
-        <!-- "Last hour" energy card: floats beside the tower. The dashed
-             marker line above shows where this sits on the tower's own
-             0–4.2 MW scale; this card spells out the exact kWh plus a few
-             relatable equivalences (see buildHourMessages() in app.js). -->
-        <g class="tower-hour-card" transform="translate(828, 500)" aria-label="Electricity generated in the last hour">
-          <rect x="0" y="0" width="225" height="92" rx="14" class="tower-hour-card-bg" />
-          <text x="16" y="24" class="tower-hour-card-label">⏱️ LAST HOUR</text>
-          <text x="16" y="52" class="tower-hour-card-value">
-            <tspan id="hour-energy-value" class="tower-hour-card-num">--</tspan>
-            <tspan class="tower-hour-card-unit"> kWh generated</tspan>
-          </text>
-          <text x="16" y="76" class="tower-hour-card-ticker" id="hour-ticker-text">Waiting for an hour of live data…</text>
+        <!-- "Last hour" energy card: floats beside the tower, positioned
+             below the rotor's full sweep circle (radius ~195 around the hub
+             at 800,393) so the spinning blades never pass over it. The
+             dashed marker line above shows where this sits on the tower's
+             own 0–4.2 MW scale; this card spells out the exact kWh plus a
+             few relatable equivalences (see buildHourMessages() in app.js).
+             Text lives in a foreignObject (plain HTML) rather than SVG
+             <text>, so it wraps naturally instead of overflowing the card. -->
+        <g class="tower-hour-card" transform="translate(835, 615)" aria-label="Electricity generated in the last hour">
+          <rect x="0" y="0" width="235" height="120" rx="14" class="tower-hour-card-bg" />
+          <foreignObject x="0" y="0" width="235" height="120">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="tower-hour-card-content">
+              <div class="tower-hour-card-label">⏱️ LAST HOUR</div>
+              <div class="tower-hour-card-value">
+                <span id="hour-energy-value" class="tower-hour-card-num">--</span>
+                <span class="tower-hour-card-unit"> kWh generated</span>
+              </div>
+              <div class="tower-hour-card-ticker" id="hour-ticker-text">Waiting for an hour of live data…</div>
+            </div>
+          </foreignObject>
         </g>
       </g>
       <g id="yaw-group">
