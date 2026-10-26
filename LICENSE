@@ -19,22 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Scope notes
-
-- This licence covers the original source code and documentation in this
-  repository (the `solutions/` concepts and the helper scripts and notes in
-  `materials/`). Each concept folder also carries its own copy of this
-  licence.
-- The ACE wind turbine data shown by the displays is not part of the
-  Software. It is published by Ambition Community Energy (ACE) under
-  CC BY 4.0 — see https://doi.org/10.5281/zenodo.22662372.
-- `materials/challenge-repo-guides/` contains reference copies of documents
-  from the WeDoWind ODE ACE Challenge repository
-  (https://github.com/WeDoWind/WeDoWind-ODE-ACE-Challenge), which keep the
-  licence terms of that repository.
-- `materials/api-reference/` and `materials/api-samples/` are verbatim
-  responses from the public ACE API, kept for reference; they are ACE data
-  under CC BY 4.0, not original work.
