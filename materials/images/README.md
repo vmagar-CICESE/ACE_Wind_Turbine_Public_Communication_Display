@@ -1,15 +1,14 @@
 # Images
 
 ## ⚠️ Correction
-`ace-turbine-community-event-2023.webp` (kept here for reference only — **do not use it as a
-turbine photo**) was found on the ACE homepage news post about the "Running Out of Time
-Climate Baton" relay (4 July 2023). On closer inspection it actually shows a surfer at
-**The Wave, Bristol** — the relay's starting point *before* the baton reached the turbine —
-not the ACE turbine itself. It was mistakenly used as a turbine photo in an early draft of
-Concept 2 and has since been replaced there with an SVG illustration. Left in this folder
-purely so the mistake isn't repeated.
-
-## Why there are so few official photos
+An image named `ace-turbine-community-event-2023.webp`, taken from the ACE homepage news
+post about the "Running Out of Time Climate Baton" relay (4 July 2023), was briefly kept
+in this folder as a possible turbine photo. On closer inspection it actually showed a
+surfer at **The Wave, Bristol** — the relay's starting point *before* the baton reached
+the turbine — not the ACE turbine itself. It was mistakenly used as a turbine photo in an
+early draft of Concept 2 and has since been replaced there with an SVG illustration. The
+file has been removed from this repository because it is ACE's photo, not ours to
+redistribute; this note is kept so the mistake isn't repeated.
 
 ## Why there are so few official photos
 The ACE (ambitioncommunityenergy.org) and ALW (ambitionlw.org) websites are simple
